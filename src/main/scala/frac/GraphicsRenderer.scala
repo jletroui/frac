@@ -13,13 +13,30 @@ class GraphicsRenderer(g: Graphics, moveLength: Double, turnAngle: Double, start
 
     def render(definition: Definition, depth: Int)
     {
-        currentPoint = Point(0, 0)
+        // Dry run to compute size
+        init(Point(0, 0))
+        definition.run(depth, callback(false))
+
+        // Center and draw
+        init(computeStartingPoint)
+        definition.run(depth, callback(false))
+    }
+
+    private def init(startPoint: Point)
+    {
+        currentPoint = startPoint
         minPoint = Point(0, 0)
         maxPoint = Point(0, 0)
         currentAngle = startAngle
         isPenDown = true
+    }
 
-        definition.run(depth, callback(false))
+    private def computeStartingPoint =
+    {
+        val bounds = g.getClipBounds
+        val (centerX, centerY) = (bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
+        val (width, height) = (maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
+        Point(centerX - width / 2, centerY - height / 2)
     }
 
     private def callback(draw: Boolean)(c: Char)
@@ -45,7 +62,7 @@ class GraphicsRenderer(g: Graphics, moveLength: Double, turnAngle: Double, start
         if (newPoint.x > maxPoint.x) maxPoint = maxPoint.copy(x = newPoint.x)
         if (newPoint.y > maxPoint.y) maxPoint = maxPoint.copy(y = newPoint.y)
 
-        if (draw && isPenDown) g.drawLine(currentPoint.x, currentPoint.y, newPoint.x, newPoint.y)
+        if (draw && isPenDown) g.drawLine(currentPoint.x.toInt, currentPoint.y.toInt, newPoint.x.toInt, newPoint.y.toInt)
 
         currentPoint = newPoint
     }
