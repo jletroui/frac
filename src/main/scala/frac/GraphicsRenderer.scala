@@ -19,7 +19,7 @@ class GraphicsRenderer(g: Graphics, moveLength: Double, turnAngle: Double, start
 
         // Center and draw
         init(computeStartingPoint)
-        definition.run(depth, callback(false))
+        definition.run(depth, callback(true))
     }
 
     private def init(startPoint: Point)
