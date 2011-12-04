@@ -4,45 +4,53 @@ import java.awt.Graphics
 
 case class Point(x: Double, y: Double)
 
-class GraphicsRenderer(g: Graphics, moveLength: Double, turnAngle: Double, startAngle: Double = 0.0) extends Renderer[Unit]
+class GraphicsRenderer(g: Graphics, turnAngle: Double, startAngle: Double = 0.0) extends Renderer[Unit]
 {
     private var currentPoint = Point(0, 0)
     private var currentAngle = startAngle
     private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
     private var isPenDown = true
+    private var moveLength = 10.0
 
     def render(definition: Definition, depth: Int)
     {
         // Dry run to compute size
-        init(Point(0, 0))
+        init(Point(0, 0) -> 10.0)
         definition.run(depth, callback(false))
 
         // Center and draw
-        init(computeStartingPoint)
+        init(computeTransformation)
         definition.run(depth, callback(true))
     }
 
-    private def init(startPoint: Point)
+    private def init(transformation: (Point, Double))
     {
-        currentPoint = startPoint
+        currentPoint = transformation._1
+        moveLength = transformation._2
         minPoint = Point(0, 0)
         maxPoint = Point(0, 0)
         currentAngle = startAngle
         isPenDown = true
     }
 
-    private def computeStartingPoint =
+    private def computeTransformation =
     {
-        val bounds = g.getClipBounds
-        val (centerX, centerY) = (bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
+        val (boundsWidth, boundsHeight) = (g.getClipBounds.width.toDouble, g.getClipBounds.height.toDouble)
         val (width, height) = (maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
-        Point(centerX - width / 2, centerY - height / 2)
+        val (boundsRatio, ratio) = (boundsWidth / boundsHeight, width / height)
+
+        val scale = if (ratio > boundsRatio) boundsWidth / width else boundsHeight / height
+        val (scaledWidth, scaledHeight) = (width * scale, height * scale)
+
+//        println("bounds(%d, %d, %d, %d) size(%d, %d)".format(bounds.x, bounds.y, bounds.width, bounds.height, width.toInt, height.toInt))
+
+        (Point(-minPoint.x * scale + (boundsWidth - scaledWidth) / 2, -minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
     }
 
     private def callback(draw: Boolean)(c: Char)
     {
         c match {
-            case '+' => currentAngle += turnAngle
+            case '+' => currentAngle -= turnAngle
             case '-' => currentAngle += turnAngle
             case '0' => isPenDown = false
             case '1' => isPenDown = true

@@ -30,10 +30,10 @@ object Main extends SimpleSwingApplication {
             opaque = true
             override def paint(g: Graphics2D) {
                 val d = new RulesAndSeedDefinition("F", Map('F' -> "F+F--F+F"))
-                val r = new GraphicsRenderer(g, 20.0, toRad(60))
+                val r = new GraphicsRenderer(g, 4.0, toRad(60))
 
                 g.setColor(new Color(100,100,100))
-                r.render(d, 1)
+                r.render(d, 5)
             }
         }
         centerOnScreen()
