@@ -15,8 +15,10 @@
  */
 package frac
 
-class RulesAndSeedDefinition(seed: String, rules: Map[Char, String]) extends Definition
+class RulesAndSeedDefinition(seed: String, rules: Map[Char, String], turnAngleDeg: Int = 90) extends Definition
 {
+    val turnAngle = toRad(turnAngleDeg)
+
     private class Token(character: Char, var rule: List[Token] = Nil)
     {
         def apply(level: Int, callback: Char => Unit)
@@ -47,4 +49,7 @@ class RulesAndSeedDefinition(seed: String, rules: Map[Char, String]) extends Def
     def run(depth: Int, callback: Char => Unit) {
         compiledSeed.foreach(_(depth, callback))
     }
+
+    private def toRad(deg: Int) = math.Pi * 2 * deg / 360
+
 }

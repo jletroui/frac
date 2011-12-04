@@ -4,10 +4,11 @@ import java.awt.Graphics
 
 case class Point(x: Double, y: Double)
 
-class GraphicsRenderer(g: Graphics, turnAngle: Double, startAngle: Double = 0.0) extends Renderer[Unit]
+class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[Unit]
 {
     private var currentPoint = Point(0, 0)
     private var currentAngle = startAngle
+    private var turnAngle = math.Pi / 2
     private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
     private var isPenDown = true
     private var moveLength = 10.0
@@ -15,17 +16,18 @@ class GraphicsRenderer(g: Graphics, turnAngle: Double, startAngle: Double = 0.0)
     def render(definition: Definition, depth: Int)
     {
         // Dry run to compute size
-        init(Point(0, 0) -> 10.0)
+        init(Point(0, 0) -> 10.0, definition.turnAngle)
         definition.run(depth, callback(false))
 
         // Center and draw
-        init(computeTransformation)
+        init(computeTransformation, definition.turnAngle)
         definition.run(depth, callback(true))
     }
 
-    private def init(transformation: (Point, Double))
+    private def init(transformation: (Point, Double), turnAngle: Double)
     {
         currentPoint = transformation._1
+        this.turnAngle = turnAngle
         moveLength = transformation._2
         minPoint = Point(0, 0)
         maxPoint = Point(0, 0)

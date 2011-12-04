@@ -21,7 +21,6 @@ import Swing._
 import java.awt.Color
 
 object Main extends SimpleSwingApplication {
-    private def toRad(deg: Int) = math.Pi * 2 * deg / 360
 
     def top = new MainFrame {
         title = "Frac"
@@ -29,11 +28,11 @@ object Main extends SimpleSwingApplication {
             preferredSize = (600,600)
             opaque = true
             override def paint(g: Graphics2D) {
-                val d = new RulesAndSeedDefinition("F", Map('F' -> "F+F--F+F"))
-                val r = new GraphicsRenderer(g, 4.0, toRad(60))
+                val d = new RulesAndSeedDefinition("F--F--F", Map('F' -> "F+F--F+F"), 60)
+                val r = new GraphicsRenderer(g)
 
                 g.setColor(new Color(100,100,100))
-                r.render(d, 5)
+                r.render(d, 6)
             }
         }
         centerOnScreen()

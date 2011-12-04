@@ -20,6 +20,7 @@ import org.specs2.mutable._
 class StringRendererSpec extends SpecificationWithJUnit
 {
     val definition = new Definition {
+        val turnAngle = 90.0
         def run(depth: Int, callback: (Char) => Unit)
         {
             Range(0, depth).foreach(i => callback((48 + i).toChar))
