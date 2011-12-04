@@ -19,20 +19,60 @@ import swing._
 import event._
 import Swing._
 import java.awt.Color
+import BorderPanel.Position._
 
 object Main extends SimpleSwingApplication {
 
-    val d = new RuleBasedDefinition("F--F--F", Map('F' -> "F+F--F+F"), 60)
+    var definition = new RuleBasedDefinition("F--F--F", Map('F' -> "F+F--F+F"), 60)
+    val parser = new RuleBasedParser
 
-    def top = new MainFrame {
+    lazy val fractalPanel = new Panel {
+        override def paintComponent(g: Graphics2D) {
+            super.paintComponent(g)
+            g.setColor(new Color(100,100,100))
+            new GraphicsRenderer(g).render(definition, depth.text.toInt)
+        }
+    }
+    lazy val editor = new TextArea("angle=60\nseed=F--F--F\nF=F+F--F+F", 5, 20)
+    lazy val depth = new TextField("1", 3) {
+        verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
+    }
+    lazy val generateBtn = new Button {
+        text = "Generate"
+        reactions += {
+            case ButtonClicked(_) =>
+                try {
+                    definition = parser.parse(editor.text)
+                    fractalPanel.repaint()
+                }
+                catch {
+                    case t: Throwable =>
+                        Dialog.showMessage(message = t.getMessage, title = "Syntax error", messageType = Dialog.Message.Error)
+                }
+        }
+    }
+    lazy val definitionPanel = new BorderPanel {
+        val bottomBar = new FlowPanel {
+            contents += depth
+            contents += generateBtn
+        }
+        layout(editor) = Center
+        layout(bottomBar) = South
+    }
+
+    lazy val center = new SplitPane(Orientation.Vertical, fractalPanel, definitionPanel) {
+        continuousLayout = true
+        oneTouchExpandable = true
+        dividerLocation = 1200
+    }
+
+    lazy val topFrame = new MainFrame {
         title = "Frac"
-        contents = new Panel {
-            preferredSize = (600,600)
+        contents = new BorderPanel {
+
+            preferredSize = (1600,1000)
             opaque = true
-            override def paint(g: Graphics2D) {
-                g.setColor(new Color(100,100,100))
-                new GraphicsRenderer(g).render(d, 6)
-            }
+            layout(center) = Center
         }
         centerOnScreen()
         listenTo(this)
@@ -42,4 +82,6 @@ object Main extends SimpleSwingApplication {
                 System.exit(0)
         }
     }
+
+    def top = topFrame
 }
