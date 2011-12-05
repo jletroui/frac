@@ -24,11 +24,13 @@ class RuleBasedParser extends DefinitionParser
         var rules = Map.empty[Char,String]
 
         text.lines.foreach { line =>
-            val Array(varName, value) = line.split('=')
-            varName match {
-                case "seed" => seed = value
-                case "angle" => angle = value.toInt
-                case c => rules = rules.updated(c(0), value)
+            if (line.trim.length > 0) {
+                val Array(varName, value) = line.split('=').map(_.trim)
+                varName match {
+                    case "seed" => seed = value
+                    case "angle" => angle = value.toInt
+                    case c => rules = rules.updated(c(0), value)
+                }
             }
         }
 

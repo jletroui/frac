@@ -18,8 +18,8 @@ package frac
 import swing._
 import event._
 import Swing._
-import java.awt.Color
 import BorderPanel.Position._
+import java.awt.{Font, Color}
 
 object Main extends SimpleSwingApplication {
 
@@ -33,27 +33,56 @@ object Main extends SimpleSwingApplication {
             new GraphicsRenderer(g).render(definition, depth.text.toInt)
         }
     }
-    lazy val editor = new TextArea("angle=60\nseed=F--F--F\nF=F+F--F+F", 5, 20)
+    lazy val editor = new TextArea("angle=60\nseed=F--F--F\nF=F+F--F+F", 5, 20) {
+        font = new Font("Verdana", Font.BOLD, 20)
+        foreground = new Color(100, 100, 100)
+    }
     lazy val depth = new TextField("1", 3) {
         verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
     }
+    private def refresh()
+    {
+        try {
+            definition = parser.parse(editor.text)
+            fractalPanel.repaint()
+        }
+        catch {
+            case t: Throwable =>
+                Dialog.showMessage(message = t.getMessage, title = "Syntax error", messageType = Dialog.Message.Error)
+        }
+    }
+
     lazy val generateBtn = new Button {
         text = "Generate"
         reactions += {
-            case ButtonClicked(_) =>
-                try {
-                    definition = parser.parse(editor.text)
-                    fractalPanel.repaint()
-                }
-                catch {
-                    case t: Throwable =>
-                        Dialog.showMessage(message = t.getMessage, title = "Syntax error", messageType = Dialog.Message.Error)
-                }
+            case ButtonClicked(_) => refresh()
         }
     }
+
+    lazy val minusBtn = new Button {
+        text = "-"
+
+        reactions += {
+            case ButtonClicked(_) =>
+                depth.text = (depth.text.toInt - 1).toString
+                refresh()
+        }
+    }
+
+    lazy val plusBtn = new Button {
+        text = "+"
+        reactions += {
+            case ButtonClicked(_) =>
+                depth.text = (depth.text.toInt + 1).toString
+                refresh()
+        }
+    }
+
     lazy val definitionPanel = new BorderPanel {
         val bottomBar = new FlowPanel {
+            contents += minusBtn
             contents += depth
+            contents += plusBtn
             contents += generateBtn
         }
         layout(editor) = Center
@@ -64,6 +93,13 @@ object Main extends SimpleSwingApplication {
         continuousLayout = true
         oneTouchExpandable = true
         dividerLocation = 1200
+        reactions += {
+            case KeyReleased(_, Key.Plus, Key.Modifier.Control, _) =>
+                depth.text = (depth.text.toInt + 1).toString
+            case KeyReleased(_, Key.Minus, Key.Modifier.Control, _) =>
+                depth.text = (depth.text.toInt - 1).toString
+            case KeyReleased(_, k, _, _) => println(k.toString)
+        }
     }
 
     lazy val topFrame = new MainFrame {
@@ -78,10 +114,6 @@ object Main extends SimpleSwingApplication {
         listenTo(this)
         defaultButton = generateBtn
         reactions += {
-            case KeyReleased(_, Key.Plus, Key.Modifier.Control, _) =>
-                depth.text = (depth.text.toInt + 1).toString
-            case KeyReleased(_, Key.Minus, Key.Modifier.Control, _) =>
-                depth.text = (depth.text.toInt - 1).toString
             case WindowClosing(e) =>
                 println("Exiting...")
                 System.exit(0)
