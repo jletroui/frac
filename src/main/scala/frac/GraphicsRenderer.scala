@@ -6,6 +6,7 @@ case class Point(x: Double, y: Double)
 
 class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[Unit]
 {
+    private val MARGIN = 20
     private var currentPoint = Point(0, 0)
     private var currentAngle = startAngle
     private var turnAngle = math.Pi / 2
@@ -37,7 +38,7 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[U
 
     private def computeTransformation =
     {
-        val (boundsWidth, boundsHeight) = (g.getClipBounds.width.toDouble, g.getClipBounds.height.toDouble)
+        val (boundsWidth, boundsHeight) = (g.getClipBounds.width.toDouble - 2 * MARGIN, g.getClipBounds.height.toDouble - 2 * MARGIN)
         val (width, height) = (maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
         val (boundsRatio, ratio) = (boundsWidth / boundsHeight, width / height)
 
@@ -46,7 +47,7 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[U
 
 //        println("bounds(%d, %d, %d, %d) size(%d, %d)".format(bounds.x, bounds.y, bounds.width, bounds.height, width.toInt, height.toInt))
 
-        (Point(-minPoint.x * scale + (boundsWidth - scaledWidth) / 2, -minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
+        (Point(MARGIN - minPoint.x * scale + (boundsWidth - scaledWidth) / 2, MARGIN - minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
     }
 
     private def callback(draw: Boolean)(c: Char)

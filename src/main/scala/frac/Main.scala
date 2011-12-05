@@ -76,7 +76,12 @@ object Main extends SimpleSwingApplication {
         }
         centerOnScreen()
         listenTo(this)
+        defaultButton = generateBtn
         reactions += {
+            case KeyReleased(_, Key.Plus, Key.Modifier.Control, _) =>
+                depth.text = (depth.text.toInt + 1).toString
+            case KeyReleased(_, Key.Minus, Key.Modifier.Control, _) =>
+                depth.text = (depth.text.toInt - 1).toString
             case WindowClosing(e) =>
                 println("Exiting...")
                 System.exit(0)
