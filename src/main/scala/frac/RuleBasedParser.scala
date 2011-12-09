@@ -20,6 +20,7 @@ class RuleBasedParser extends DefinitionParser
     def parse(text: String) =
     {
         var angle = 90
+        var ratio = 0.5
         var seed = "F"
         var rules = Map.empty[Char,String]
 
@@ -29,11 +30,12 @@ class RuleBasedParser extends DefinitionParser
                 varName match {
                     case "seed" => seed = value
                     case "angle" => angle = value.toInt
+                    case "ratio" => ratio = value.toDouble
                     case c => rules = rules.updated(c(0), value)
                 }
             }
         }
 
-        new RuleBasedDefinition(seed, rules, angle)
+        new RuleBasedDefinition(seed, rules, angle, ratio)
     }
 }

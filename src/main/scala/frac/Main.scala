@@ -23,6 +23,9 @@ import java.awt.{Font, Color}
 
 object Main extends SimpleSwingApplication {
 
+    val SEGMENT_STAT_TEMPLATE = "Segments: %d"
+    val TOKEN_STAT_TEMPLATE = "Tokens: %d"
+    val TIME_STAT_TEMPLATE = "Time: %d"
     var definition = new RuleBasedDefinition("F--F--F", Map('F' -> "F+F--F+F"), 60)
     val parser = new RuleBasedParser
 
@@ -30,28 +33,24 @@ object Main extends SimpleSwingApplication {
         override def paintComponent(g: Graphics2D) {
             super.paintComponent(g)
             g.setColor(new Color(100,100,100))
-            new GraphicsRenderer(g).render(definition, depth.text.toInt)
+            val stats = new GraphicsRenderer(g).render(definition, depth.text.toInt)
+            segmentStat.text = SEGMENT_STAT_TEMPLATE.format(stats.segments)
+            tokensStat.text = TOKEN_STAT_TEMPLATE.format(stats.tokens)
+            timeStat.text = TIME_STAT_TEMPLATE.format(stats.time)
         }
     }
     lazy val editor = new TextArea("angle=60\nseed=F--F--F\nF=F+F--F+F", 5, 20) {
         font = new Font("Verdana", Font.BOLD, 20)
         foreground = new Color(100, 100, 100)
     }
+
+    lazy val segmentStat = new Label()
+    lazy val tokensStat = new Label()
+    lazy val timeStat = new Label()
+
     lazy val depth = new TextField("1", 3) {
         verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
     }
-    private def refresh()
-    {
-        try {
-            definition = parser.parse(editor.text)
-            fractalPanel.repaint()
-        }
-        catch {
-            case t: Throwable =>
-                Dialog.showMessage(message = t.getMessage, title = "Syntax error", messageType = Dialog.Message.Error)
-        }
-    }
-
     lazy val generateBtn = new Button {
         text = "Generate"
         reactions += {
@@ -79,13 +78,19 @@ object Main extends SimpleSwingApplication {
     }
 
     lazy val definitionPanel = new BorderPanel {
+        val rightSection = new BoxPanel(Orientation.Vertical) {
+            contents += editor
+            contents += segmentStat
+            contents += tokensStat
+            contents += timeStat
+        }
         val bottomBar = new FlowPanel {
             contents += minusBtn
             contents += depth
             contents += plusBtn
             contents += generateBtn
         }
-        layout(editor) = Center
+        layout(rightSection) = Center
         layout(bottomBar) = South
     }
 
@@ -121,4 +126,17 @@ object Main extends SimpleSwingApplication {
     }
 
     def top = topFrame
+
+    private def refresh()
+    {
+        try {
+            definition = parser.parse(editor.text)
+            fractalPanel.repaint()
+        }
+        catch {
+            case t: Throwable =>
+                Dialog.showMessage(message = t.getMessage, title = "Syntax error", messageType = Dialog.Message.Error)
+        }
+    }
+
 }

@@ -18,5 +18,6 @@ package frac
 trait Definition
 {
     def turnAngle: Double
+    def scaleRatio: Double
     def run(depth: Int, callback: Char => Unit)
 }

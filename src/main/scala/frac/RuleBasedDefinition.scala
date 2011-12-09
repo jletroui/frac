@@ -15,7 +15,7 @@
  */
 package frac
 
-class RuleBasedDefinition(seed: String, rules: Map[Char, String], turnAngleDeg: Int = 90) extends Definition
+class RuleBasedDefinition(seed: String, rules: Map[Char, String], turnAngleDeg: Int = 90, val scaleRatio: Double = 0.5) extends Definition
 {
     val turnAngle = toRad(turnAngleDeg)
 
