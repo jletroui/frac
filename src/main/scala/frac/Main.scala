@@ -26,8 +26,9 @@ object Main extends SimpleSwingApplication {
     val SEGMENT_STAT_TEMPLATE = "Segments: %d"
     val TOKEN_STAT_TEMPLATE = "Tokens: %d"
     val TIME_STAT_TEMPLATE = "Time: %d"
-    var definition = new RuleBasedDefinition("F--F--F", Map('F' -> "F+F--F+F"), 60)
     val parser = new RuleBasedParser
+    val definitions = new DefaultDefinitionRepository().getDefinitions
+    var definition = parser.parse(definitions(0).source)
 
     lazy val fractalPanel = new Panel {
         override def paintComponent(g: Graphics2D) {
@@ -39,7 +40,23 @@ object Main extends SimpleSwingApplication {
             timeStat.text = TIME_STAT_TEMPLATE.format(stats.time)
         }
     }
-    lazy val editor = new TextArea("angle=60\nseed=F--F--F\nF=F+F--F+F", 5, 20) {
+
+    lazy val definitionList = new ComboBox[DefinitionSource](definitions) {
+        selection.index = 0
+
+        def select()
+        {
+            editor.text = definitions(selection.index).source
+            depth.text = "1"
+            refresh()
+        }
+
+        selection.reactions += {
+            case SelectionChanged(_) => select()
+        }
+    }
+
+    lazy val editor = new TextArea(5, 20) {
         font = new Font("Verdana", Font.BOLD, 20)
         foreground = new Color(100, 100, 100)
     }
@@ -90,6 +107,7 @@ object Main extends SimpleSwingApplication {
             contents += plusBtn
             contents += generateBtn
         }
+        layout(definitionList) = North
         layout(rightSection) = Center
         layout(bottomBar) = South
     }

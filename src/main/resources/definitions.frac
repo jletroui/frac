@@ -1,0 +1,90 @@
+Cross:
+seed = F-F-F-F
+F = F-F+F+F-F
+
+Koch:
+angle = 60
+seed = F
+F = F+F--F+F
+
+Cesaro (Koch with an angle between 60 and 90):
+angle = 85
+seed = F
+F = F+F--F+F
+
+Koch snowflake:
+angle = 60
+seed = F++F++F
+F = F-F++F-F
+
+Koch star:
+angle = 60
+seed = F+++F-F+++F-F+++F
+F = F-F++F-F
+
+Sierpiensky triangle:
+angle = 120
+seed = F+F+F
+F = F+F+F+FF
+
+Sierpiensky triangle variant:
+angle = 60
+seed = X
+X = YF+XF+Y
+Y = XF-YF-X
+
+Peano:
+seed = F
+F = FF+F+F+FF+F+F-F
+
+Peano-Gosper:
+angle = 60
+seed = X
+X = X+YF++YF-FX--FXFX-YF+
+Y = -FX+YFYF++YF+FX--FX-Y
+
+Hilbert:
+seed = X
+X = -Yf+XfX+fY-
+Y = +Xf-YfY-fX+
+
+Hilbert 2:
+seed = X
+X = XFYFX+F+YFXFY-F-XFYFX
+Y = YFXFY-F-XFYFX+F+YFXFY
+
+Moore:
+seed = LFL+F+LFL
+L = -RF+LFL+FR-
+R = +LF-RFR-FL+
+
+Dragon:
+seed =FX
+X = X+YF
+Y = FX-Y
+
+Terdragon:
+angle = 120
+seed = F
+F = F+F-F
+
+Simple tree:
+angle = 45
+seed = FG
+G = [>+FG]>-FG
+
+Quadradic type 1:
+seed = F
+F = F+F-F-F+F
+
+Quadradic type 2:
+seed = F
+F = F+F-F-FF+F+F-F
+
+Quadratic island:
+seed = F+F+F+F
+F = F-F+F+FFF-F-F+F
+
+Square:
+seed = F+XF+F+XF
+X = XF-F+F-XF+F+XF-F+F-X
