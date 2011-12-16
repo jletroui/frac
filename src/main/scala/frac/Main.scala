@@ -25,7 +25,7 @@ object Main extends SimpleSwingApplication {
 
     val SEGMENT_STAT_TEMPLATE = "Segments: %d"
     val TOKEN_STAT_TEMPLATE = "Tokens: %d"
-    val TIME_STAT_TEMPLATE = "Time: %d"
+    val TIME_STAT_TEMPLATE = "Time: %d ms"
     val parser = new RuleBasedParser
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
@@ -56,7 +56,7 @@ object Main extends SimpleSwingApplication {
         }
     }
 
-    lazy val editor = new TextArea(5, 20) {
+    lazy val editor = new TextArea(definitions.head.source, 5, 20) {
         font = new Font("Verdana", Font.BOLD, 20)
         foreground = new Color(100, 100, 100)
     }
