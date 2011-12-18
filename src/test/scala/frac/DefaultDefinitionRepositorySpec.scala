@@ -20,8 +20,9 @@ import org.specs2.mutable._
 class DefaultDefinitionRepositorySpec extends SpecificationWithJUnit
 {
     val sut = new DefaultDefinitionRepository
-    val crossSrc = """seed = F-F-F-F
-F = F-F+F+F-F
+    val kochSrc = """angle = 60
+seed = F
+F = F+F--F+F
 """
 
     "definition repository" should {
@@ -30,7 +31,7 @@ F = F-F+F+F-F
         }
 
         "have the cross as the first definition" in {
-            sut.getDefinitions(0).source must beEqualTo(crossSrc)
+            sut.getDefinitions(0).source must beEqualTo(kochSrc)
         }
     }
 

@@ -35,14 +35,10 @@ object Main extends SimpleSwingApplication {
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
 
-    val turtleMovesStat = new Label("", null, Alignment.Left)
-    val turtleTurnsStat = new Label("", null, Alignment.Left)
-    val squenceLengthStat = new Label("", null, Alignment.Left)
-    val durationStat = new Label("", null, Alignment.Left)
-    val editorLabel = new Label("Editor:", null, Alignment.Left) {
-        border = EmptyBorder(5, 2, 5, 2)
-        font = font.deriveFont(Font.BOLD)
-    }
+    val turtleMovesStat = new Label//("", null, Alignment.Left)
+    val turtleTurnsStat = new Label//("", null, Alignment.Left)
+    val squenceLengthStat = new Label//("", null, Alignment.Left)
+    val durationStat = new Label//("", null, Alignment.Left)
     val generateBtn = new Button("Refresh")
     val minusBtn = new Button("-")
     val plusBtn = new Button("+")
@@ -60,8 +56,10 @@ object Main extends SimpleSwingApplication {
     val editor = new TextArea(definitions.head.source, 5, 20) {
         font = new Font("Monospaced", Font.BOLD, 16)
         foreground = new Color(CODE_COLOR, CODE_COLOR, CODE_COLOR)
+        border = TitledBorder(null, "Editor")
     }
     val depth = new TextField("1", 3) {
+        maximumSize = preferredSize
         verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
     }
     val fractalPanel = new Panel {
@@ -76,33 +74,38 @@ object Main extends SimpleSwingApplication {
         }
     }
 
-    val definitionPanel = new BorderPanel {
-        val rightSection = new BoxPanel(Orientation.Vertical) {
-            contents += editor
-            contents += turtleMovesStat
-            contents += turtleTurnsStat
-            contents += squenceLengthStat
-            contents += durationStat
+    val rightSection = new BoxPanel(Orientation.Vertical) {
+        contents += editor
+        contents += new BoxPanel(Orientation.Horizontal) {
+            contents += new BoxPanel(Orientation.Vertical) {
+                contents += turtleMovesStat
+                contents += turtleTurnsStat
+                contents += squenceLengthStat
+                contents += durationStat
+            }
+            contents += HGlue
+
+            border = TitledBorder(null, "Drawing stats")
         }
-        val bottomBar = new FlowPanel {
+        contents += new BoxPanel(Orientation.Horizontal) {
+            contents += HGlue
+            contents += new Label("Depth: ")
             contents += minusBtn
             contents += depth
             contents += plusBtn
+            contents += HStrut(10)
             contents += generateBtn
         }
-        layout(editorLabel) = North
-        layout(rightSection) = Center
-        layout(bottomBar) = South
     }
 
-    val center = new SplitPane(Orientation.Vertical, fractalPanel, definitionPanel) {
+    val center = new SplitPane(Orientation.Vertical, fractalPanel, rightSection) {
         continuousLayout = true
         oneTouchExpandable = true
         dividerLocation = 1200
     }
 
     lazy val topFrame = new MainFrame {
-        title = "Frac v1.0"
+        title = "Frac 1.0"
         contents = new BorderPanel {
             preferredSize = (1600,1000)
             opaque = true
