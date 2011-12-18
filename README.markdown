@@ -8,6 +8,14 @@ For a good introduction, I suggest reading this [paper](http://algorithmicbotany
 frac programming is simple. You can type your definition as free text in the editor area, and lick "Refresh" to see the result.
 Graphical primitives allows you to direct a virtual "turtle" that is holding a pen and reading a sequence of characters, as in the [LOGO programming language](http://en.wikipedia.org/wiki/Turtle_graphics).
 
+Download and installation
+=========================
+
+You can download frac in the "Downloads" section. You need a Java runtime 6 or greater in order to run frac. On most systems, just double click on the jar you downloaded.
+You can also type this command in a terminal:
+
+   java -jar frac-1.0.jar
+
 Most basic definition
 =====================
 
