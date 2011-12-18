@@ -15,15 +15,7 @@
  */
 package frac
 
-trait Definition
+class RichInt(enriched: Int)
 {
-    def turnAngle: Double
-    def scaleRatio: Double
-    def startingPoint: StartingPoint.Value
-    def run(depth: Int, callback: Char => Unit)
-}
-
-object StartingPoint extends Enumeration
-{
-    val Left, Bottom = Value
+    def toRad = math.Pi * 2 * enriched / 360
 }

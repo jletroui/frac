@@ -21,6 +21,7 @@ class RuleBasedParserSpec extends SpecificationWithJUnit
 {
     val text = """seed=F
 angle=60
+start=bottom
 ratio=0.8
 F=F-F++F-F
 """
@@ -30,8 +31,11 @@ F=F-F++F-F
         "parse the angle of definition" in {
             new RuleBasedParser().parse(text).turnAngle must beEqualTo(60*2*math.Pi / 360)
         }
-        "parse the ration of definition" in {
+        "parse the ratio of definition" in {
             new RuleBasedParser().parse(text).scaleRatio must beEqualTo(0.8)
+        }
+        "parse the starting point of definition" in {
+            new RuleBasedParser().parse(text).startingPoint must beEqualTo(StartingPoint.Bottom)
         }
         "parse the rules of a definition" in {
             renderer.render (new RuleBasedParser().parse(text), 1) must beEqualTo("F-F++F-F")

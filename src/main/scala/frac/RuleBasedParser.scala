@@ -21,6 +21,7 @@ class RuleBasedParser extends DefinitionParser
     {
         var angle = 90
         var ratio = 0.5
+        var start = StartingPoint.Left
         var seed = "F"
         var rules = Map.empty[Char,String]
 
@@ -31,11 +32,14 @@ class RuleBasedParser extends DefinitionParser
                     case "seed" => seed = value
                     case "angle" => angle = value.toInt
                     case "ratio" => ratio = value.toDouble
+                    case "start" => value.toLowerCase match {
+                        case "bottom" => start = StartingPoint.Bottom
+                    }
                     case c => rules = rules.updated(c(0), value)
                 }
             }
         }
 
-        new RuleBasedDefinition(seed, rules, angle, ratio)
+        new RuleBasedDefinition(seed, rules, angle, ratio, start)
     }
 }

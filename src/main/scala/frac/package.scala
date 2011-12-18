@@ -13,17 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package frac
 
-trait Definition
+package object frac
 {
-    def turnAngle: Double
-    def scaleRatio: Double
-    def startingPoint: StartingPoint.Value
-    def run(depth: Int, callback: Char => Unit)
-}
-
-object StartingPoint extends Enumeration
-{
-    val Left, Bottom = Value
+    implicit def toRichInt(enriched: Int) = new RichInt(enriched)
 }

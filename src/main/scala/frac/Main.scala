@@ -30,7 +30,28 @@ object Main extends SimpleSwingApplication {
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
 
-    lazy val fractalPanel = new Panel {
+    val segmentStat = new Label()
+    val tokensStat = new Label()
+    val timeStat = new Label()
+    val generateBtn = new Button("Generate")
+    val minusBtn = new Button("-")
+    val plusBtn = new Button("+")
+
+    val definitionList = new ComboBox[DefinitionSource](definitions) {
+        selection.index = 0
+        peer.setMaximumRowCount(20)
+    }
+
+    val editor = new TextArea(definitions.head.source, 5, 20) {
+        font = new Font("Verdana", Font.BOLD, 20)
+        foreground = new Color(100, 100, 100)
+    }
+
+    val depth = new TextField("1", 3) {
+        verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
+    }
+
+    val fractalPanel = new Panel {
         override def paintComponent(g: Graphics2D) {
             super.paintComponent(g)
             g.setColor(new Color(100,100,100))
@@ -41,60 +62,7 @@ object Main extends SimpleSwingApplication {
         }
     }
 
-    lazy val definitionList = new ComboBox[DefinitionSource](definitions) {
-        selection.index = 0
-
-        def select()
-        {
-            editor.text = definitions(selection.index).source
-            depth.text = "1"
-            refresh()
-        }
-
-        selection.reactions += {
-            case SelectionChanged(_) => select()
-        }
-    }
-
-    lazy val editor = new TextArea(definitions.head.source, 5, 20) {
-        font = new Font("Verdana", Font.BOLD, 20)
-        foreground = new Color(100, 100, 100)
-    }
-
-    lazy val segmentStat = new Label()
-    lazy val tokensStat = new Label()
-    lazy val timeStat = new Label()
-
-    lazy val depth = new TextField("1", 3) {
-        verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
-    }
-    lazy val generateBtn = new Button {
-        text = "Generate"
-        reactions += {
-            case ButtonClicked(_) => refresh()
-        }
-    }
-
-    lazy val minusBtn = new Button {
-        text = "-"
-
-        reactions += {
-            case ButtonClicked(_) =>
-                depth.text = (depth.text.toInt - 1).toString
-                refresh()
-        }
-    }
-
-    lazy val plusBtn = new Button {
-        text = "+"
-        reactions += {
-            case ButtonClicked(_) =>
-                depth.text = (depth.text.toInt + 1).toString
-                refresh()
-        }
-    }
-
-    lazy val definitionPanel = new BorderPanel {
+    val definitionPanel = new BorderPanel {
         val rightSection = new BoxPanel(Orientation.Vertical) {
             contents += editor
             contents += segmentStat
@@ -112,31 +80,33 @@ object Main extends SimpleSwingApplication {
         layout(bottomBar) = South
     }
 
-    lazy val center = new SplitPane(Orientation.Vertical, fractalPanel, definitionPanel) {
+    val center = new SplitPane(Orientation.Vertical, fractalPanel, definitionPanel) {
         continuousLayout = true
         oneTouchExpandable = true
         dividerLocation = 1200
-        reactions += {
-            case KeyReleased(_, Key.Plus, Key.Modifier.Control, _) =>
-                depth.text = (depth.text.toInt + 1).toString
-            case KeyReleased(_, Key.Minus, Key.Modifier.Control, _) =>
-                depth.text = (depth.text.toInt - 1).toString
-            case KeyReleased(_, k, _, _) => println(k.toString)
-        }
     }
 
     lazy val topFrame = new MainFrame {
         title = "Frac"
         contents = new BorderPanel {
-
             preferredSize = (1600,1000)
             opaque = true
             layout(center) = Center
         }
         centerOnScreen()
-        listenTo(this)
+        listenTo(this, minusBtn, plusBtn, generateBtn, definitionList.selection)
         defaultButton = generateBtn
         reactions += {
+            case ButtonClicked(`minusBtn`) =>
+                depth.text = (depth.text.toInt - 1).toString
+                refresh()
+            case ButtonClicked(`plusBtn`) =>
+                depth.text = (depth.text.toInt + 1).toString
+                refresh()
+            case ButtonClicked(`generateBtn`) =>
+                refresh()
+            case SelectionChanged(`definitionList`) =>
+                select()
             case WindowClosing(e) =>
                 println("Exiting...")
                 System.exit(0)
@@ -145,7 +115,14 @@ object Main extends SimpleSwingApplication {
 
     def top = topFrame
 
-    private def refresh()
+    def select()
+    {
+        editor.text = definitions(definitionList.selection.index).source
+        depth.text = "1"
+        refresh()
+    }
+
+    def refresh()
     {
         try {
             definition = parser.parse(editor.text)

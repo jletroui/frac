@@ -1,13 +1,9 @@
-Cross
-seed = F-F-F-F
-F = F-F+F+F-F
-
-Koch
+Koch line
 angle = 60
 seed = F
 F = F+F--F+F
 
-Cesaro (Koch with 60 < angle < 90)
+Cesaro line (Koch with 60 < angle < 90)
 angle = 85
 seed = F
 F = F+F--F+F
@@ -21,6 +17,10 @@ Koch star
 angle = 60
 seed = F+++F-F+++F-F+++F
 F = F-F++F-F
+
+Cross
+seed = F-F-F-F
+F = F-F+F+F-F
 
 Sierpiensky triangle
 angle = 120
@@ -45,13 +45,18 @@ Y = -FX+YFYF++YF+FX--FX-Y
 
 Hilbert
 seed = X
-X = -Yf+XfX+fY-
-Y = +Xf-YfY-fX+
+X = -YF+XFX+FY-
+Y = +XF-YFY-FX+
 
 Hilbert 2
 seed = X
 X = XFYFX+F+YFXFY-F-XFYFX
 Y = YFXFY-F-XFYFX+F+YFXFY
+
+Hilbert 3
+seed = L
+L = L+F+R-F-L+F+R-F-L-F-R+F+L-F-R-F-L+F+R-F-L-F-R-F-L+F+R+F+L+F+R-F-L+F+R+F+L-R-F+F+L+F+R-F-L+F+R-F-L
+R = R-F-L+F+R-F-L+F+R+F+L-F-R+F+L+F+R-F-L+F+R+F+L+F+R-F-L-F-R-F-L+F+R-F-L-F-R+F+L-F-R-F-L+F+R-F-L+F+R
 
 Moore
 seed = LFL+F+LFL
@@ -68,11 +73,6 @@ angle = 120
 seed = F
 F = F+F-F
 
-Simple tree
-angle = 45
-seed = FG
-G = [>+FG]>-FG
-
 Quadradic type 1
 seed = F
 F = F+F-F-F+F
@@ -85,6 +85,80 @@ Quadratic island
 seed = F+F+F+F
 F = F-F+F+FFF-F-F+F
 
+Island + lake
+seed = F+F+F+F
+F = F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF
+f = ffffff
+
+Island 2
+seed = F-F-F-F
+F = FF-F-F-F-F-F+F
+
+Island 3
+seed = F-F-F-F
+F = FF-F-F-F-FF
+
+Island 4
+seed = F-F-F-F
+F = FF-F+F-F-FF
+
+Island 5
+seed = F-F-F-F
+F = FF-F--F-F
+
+Island 6
+seed = F-F-F-F
+F = F-FF--F-F
+
+Island 7
+seed = F-F-F-F
+F = F-F+F-F-F
+
 Square
 seed = F+XF+F+XF
 X = XF-F+F-XF+F+XF-F+F-X
+
+Simple tree
+start = bottom
+angle = 45
+seed = FG
+G = [+FG]-FG
+F = FF
+
+Tree 1
+start = bottom
+angle = 20
+seed = F
+F = F[+F][-F[-F]F]F[+F][-F]
+
+Tree 2
+start = bottom
+angle = 25
+seed = F
+F = F[+F]F[-F]F
+
+Tree 3
+start = bottom
+angle = 20
+seed = F
+F = F[+F]F[-F][F]
+
+Tree 4
+start = bottom
+angle = 22
+seed = F
+F = FF-[-F+F+F]+[+F-F-F]
+
+Tree 5
+start = bottom
+angle = 20
+seed = X
+X = F[+X]F[-X]+X
+F = FF
+
+Tree 6
+start = bottom
+angle = 22
+seed = X
+X = F-[[X]+X]+F[+FX]-X
+F = FF

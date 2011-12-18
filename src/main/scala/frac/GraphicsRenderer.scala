@@ -7,14 +7,13 @@ import java.util.Date
 case class Point(x: Double, y: Double)
 case class RendererStats(segments: Int, tokens: Int, time: Long)
 
-class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[RendererStats]
+class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
 {
     private val MARGIN = 20
     private var position = Point(0, 0)
-    private var angle = startAngle
+    private var angle = 0.0
     private var turnAngle = math.Pi / 2
     private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
-    private var isPenDown = true
     private var travelLength = 10.0
     private var stateStack = Stack.empty[TurtleState]
     private var (segmentCounter, tokenCounter) = (0, 0)
@@ -25,25 +24,27 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[R
     {
         val start = new Date().getTime
         // Dry run to compute size
-        init(Point(0, 0) -> 10.0, definition.turnAngle)
+        init(Point(0, 0) -> 10.0, definition)
         definition.run(depth, callback(false, definition.scaleRatio))
 
-        // Center and draw
-        init(computeTransformation, definition.turnAngle)
+        // Center, scale, and draw
+        init(computeTransformation, definition)
         definition.run(depth, callback(true, definition.scaleRatio))
 
         RendererStats(segmentCounter, tokenCounter, new Date().getTime - start)
     }
 
-    private def init(transformation: (Point, Double), turnAngle: Double)
+    private def init(transformation: (Point, Double), definition: Definition)
     {
         position = transformation._1
-        angle = startAngle
+        angle = definition.startingPoint match {
+            case StartingPoint.Left => 0.0
+            case StartingPoint.Bottom => -math.Pi / 2
+        }
         travelLength = transformation._2
-        this.turnAngle = turnAngle
+        this.turnAngle = definition.turnAngle
         minPoint = Point(0, 0)
         maxPoint = Point(0, 0)
-        isPenDown = true
         stateStack = Stack.empty[TurtleState]
         segmentCounter = 0
         tokenCounter = 0
@@ -58,8 +59,6 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[R
         val scale = if (ratio > boundsRatio) boundsWidth / width else boundsHeight / height
         val (scaledWidth, scaledHeight) = (width * scale, height * scale)
 
-//        println("bounds(%d, %d, %d, %d) size(%d, %d)".format(bounds.x, bounds.y, bounds.width, bounds.height, width.toInt, height.toInt))
-
         (Point(MARGIN - minPoint.x * scale + (boundsWidth - scaledWidth) / 2, MARGIN - minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
     }
 
@@ -68,13 +67,17 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[R
         c match {
             case '+' => angle -= turnAngle
             case '-' => angle += turnAngle
-            case '0' => isPenDown = false
-            case '1' => isPenDown = true
-            case 'F' | 'f' =>
+            case 'F' =>
                 move(draw, 1.0)
                 segmentCounter += 1
-            case 'B' | 'b' =>
+            case 'f' =>
+                move(false, 1.0)
+                segmentCounter += 1
+            case 'B' =>
                 move(draw, -1.0)
+                segmentCounter += 1
+            case 'b' =>
+                move(false, -1.0)
                 segmentCounter += 1
             case '['=> stateStack = stateStack.push(TurtleState(position, angle, travelLength))
             case ']'=>
@@ -102,7 +105,7 @@ class GraphicsRenderer(g: Graphics, startAngle: Double = 0.0) extends Renderer[R
         if (newPoint.x > maxPoint.x) maxPoint = maxPoint.copy(x = newPoint.x)
         if (newPoint.y > maxPoint.y) maxPoint = maxPoint.copy(y = newPoint.y)
 
-        if (draw && isPenDown) g.drawLine(position.x.toInt, position.y.toInt, newPoint.x.toInt, newPoint.y.toInt)
+        if (draw) g.drawLine(position.x.toInt, position.y.toInt, newPoint.x.toInt, newPoint.y.toInt)
 
         position = newPoint
     }
