@@ -5,20 +5,20 @@ import collection.immutable.Stack
 import java.util.Date
 
 case class Point(x: Double, y: Double)
-case class RendererStats(segments: Int, tokens: Int, time: Long)
+case class RendererStats(turtleMoves: Int, turtleTurns: Int, sequenceLength: Int, duration: Long)
 
 class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
 {
     private val MARGIN = 20
     private var position = Point(0, 0)
-    private var angle = 0.0
+    private var heading = 0.0
     private var turnAngle = math.Pi / 2
     private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
     private var travelLength = 10.0
     private var stateStack = Stack.empty[TurtleState]
-    private var (segmentCounter, tokenCounter) = (0, 0)
+    private var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
 
-    private case class TurtleState(position: Point, angle: Double, moveLength: Double)
+    private case class TurtleState(position: Point, heading: Double, moveLength: Double)
 
     def render(definition: Definition, depth: Int) : RendererStats =
     {
@@ -31,13 +31,13 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         init(computeTransformation, definition)
         definition.run(depth, callback(true, definition.scaleRatio))
 
-        RendererStats(segmentCounter, tokenCounter, new Date().getTime - start)
+        RendererStats(turtleMovesCounter, turtleTurnsCounter, sequenceCounter, new Date().getTime - start)
     }
 
     private def init(transformation: (Point, Double), definition: Definition)
     {
         position = transformation._1
-        angle = definition.startingPoint match {
+        heading = definition.startingPoint match {
             case StartingPoint.Left => 0.0
             case StartingPoint.Bottom => -math.Pi / 2
         }
@@ -46,8 +46,9 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         minPoint = Point(0, 0)
         maxPoint = Point(0, 0)
         stateStack = Stack.empty[TurtleState]
-        segmentCounter = 0
-        tokenCounter = 0
+        turtleMovesCounter = 0
+        turtleTurnsCounter = 0
+        sequenceCounter = 0
     }
 
     private def computeTransformation =
@@ -65,40 +66,39 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
     private def callback(draw: Boolean, scaleRatio: Double)(c: Char)
     {
         c match {
-            case '+' => angle -= turnAngle
-            case '-' => angle += turnAngle
+            case '+' =>
+                heading -= turnAngle
+                turtleTurnsCounter += 1
+            case '-' =>
+                heading += turnAngle
+                turtleTurnsCounter += 1
             case 'F' =>
-                move(draw, 1.0)
-                segmentCounter += 1
+                move(draw)
+                turtleMovesCounter += 1
             case 'f' =>
-                move(false, 1.0)
-                segmentCounter += 1
-            case 'B' =>
-                move(draw, -1.0)
-                segmentCounter += 1
-            case 'b' =>
-                move(false, -1.0)
-                segmentCounter += 1
-            case '['=> stateStack = stateStack.push(TurtleState(position, angle, travelLength))
+                move(false)
+                turtleMovesCounter += 1
+            case '['=>
+                stateStack = stateStack.push(TurtleState(position, heading, travelLength))
             case ']'=>
                 val (state, newStack) = stateStack.pop2
-                angle = state.angle
+                heading = state.heading
                 travelLength = state.moveLength
                 position = state.position
                 stateStack = newStack
             case '>' => travelLength *= scaleRatio
             case '<' => travelLength /= scaleRatio
-            case _ => ()
+            case _ => () // Ignores all other characters
         }
 
-        tokenCounter += 1
+        sequenceCounter += 1
     }
 
-    private def move(draw: Boolean, scale: Double)
+    private def move(draw: Boolean)
     {
         val newPoint = Point(
-            position.x + scale * travelLength * math.cos(angle),
-            position.y + scale * travelLength * math.sin(angle))
+            position.x + travelLength * math.cos(heading),
+            position.y + travelLength * math.sin(heading))
 
         if (newPoint.x < minPoint.x) minPoint = minPoint.copy(x = newPoint.x)
         if (newPoint.y < minPoint.y) minPoint = minPoint.copy(y = newPoint.y)

@@ -19,23 +19,26 @@ import swing._
 import event._
 import Swing._
 import BorderPanel.Position._
-import java.awt.{GraphicsEnvironment, Font, Color}
+import java.awt.{Desktop, GraphicsEnvironment, Font, Color}
+import java.net.URI
 
 object Main extends SimpleSwingApplication {
 
     //GraphicsEnvironment.getLocalGraphicsEnvironment.getAvailableFontFamilyNames.foreach(println(_))
 
-    val SEGMENT_STAT_TEMPLATE = "Turtle moves: %d"
-    val TOKEN_STAT_TEMPLATE = "Sequence length: %d"
-    val TIME_STAT_TEMPLATE = "Drawing duration: %d ms"
+    val TURTLE_MOVES_STAT_TEMPLATE = "Turtle moves: %,d"
+    val TURTLE_TURNS_STAT_TEMPLATE = "Turtle turns: %,d"
+    val SEQUENCE_LENGTH_STAT_TEMPLATE = "Sequence length: %,d"
+    val DURATION_STAT_TEMPLATE = "Drawing duration: %d ms"
     val CODE_COLOR = 80
     val parser = new RuleBasedParser
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
 
-    val segmentStat = new Label("", null, Alignment.Left)
-    val tokensStat = new Label("", null, Alignment.Left)
-    val timeStat = new Label("", null, Alignment.Left)
+    val turtleMovesStat = new Label("", null, Alignment.Left)
+    val turtleTurnsStat = new Label("", null, Alignment.Left)
+    val squenceLengthStat = new Label("", null, Alignment.Left)
+    val durationStat = new Label("", null, Alignment.Left)
     val editorLabel = new Label("Editor:", null, Alignment.Left) {
         border = EmptyBorder(5, 2, 5, 2)
         font = font.deriveFont(Font.BOLD)
@@ -50,8 +53,8 @@ object Main extends SimpleSwingApplication {
             }))
         }
         contents += new Menu("Help") {
-            contents += new MenuItem("License")
-            contents += new MenuItem("User manual")
+            contents += new MenuItem(Action("User manual") { browse("https://github.com/jletroui/frac/blob/master/README.markdown") })
+            contents += new MenuItem(Action("License") { browse("https://raw.github.com/jletroui/frac/master/LICENSE") })
         }
     }
     val editor = new TextArea(definitions.head.source, 5, 20) {
@@ -66,18 +69,20 @@ object Main extends SimpleSwingApplication {
             super.paintComponent(g)
             g.setColor(new Color(100,100,100))
             val stats = new GraphicsRenderer(g).render(definition, depth.text.toInt)
-            segmentStat.text = SEGMENT_STAT_TEMPLATE.format(stats.segments)
-            tokensStat.text = TOKEN_STAT_TEMPLATE.format(stats.tokens)
-            timeStat.text = TIME_STAT_TEMPLATE.format(stats.time)
+            turtleMovesStat.text = TURTLE_MOVES_STAT_TEMPLATE.format(stats.turtleMoves)
+            turtleTurnsStat.text = TURTLE_TURNS_STAT_TEMPLATE.format(stats.turtleTurns)
+            squenceLengthStat.text = SEQUENCE_LENGTH_STAT_TEMPLATE.format(stats.sequenceLength)
+            durationStat.text = DURATION_STAT_TEMPLATE.format(stats.duration)
         }
     }
 
     val definitionPanel = new BorderPanel {
         val rightSection = new BoxPanel(Orientation.Vertical) {
             contents += editor
-            contents += segmentStat
-            contents += tokensStat
-            contents += timeStat
+            contents += turtleMovesStat
+            contents += turtleTurnsStat
+            contents += squenceLengthStat
+            contents += durationStat
         }
         val bottomBar = new FlowPanel {
             contents += minusBtn
@@ -143,4 +148,10 @@ object Main extends SimpleSwingApplication {
         }
     }
 
+    lazy val desktop = if (Desktop.isDesktopSupported) Some(Desktop.getDesktop) else None
+    lazy val browser = if (desktop.isDefined && desktop.get.isSupported(Desktop.Action.BROWSE)) Some(desktop.get.browse _) else None
+    def browse(url: String)
+    {
+        browser.foreach(_(new URI(url)))
+    }
 }
