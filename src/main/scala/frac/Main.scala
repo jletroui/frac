@@ -25,35 +25,42 @@ object Main extends SimpleSwingApplication {
 
     //GraphicsEnvironment.getLocalGraphicsEnvironment.getAvailableFontFamilyNames.foreach(println(_))
 
-    val SEGMENT_STAT_TEMPLATE = "Segments: %d"
-    val TOKEN_STAT_TEMPLATE = "Tokens: %d"
-    val TIME_STAT_TEMPLATE = "Time: %d ms"
+    val SEGMENT_STAT_TEMPLATE = "Turtle moves: %d"
+    val TOKEN_STAT_TEMPLATE = "Sequence length: %d"
+    val TIME_STAT_TEMPLATE = "Drawing duration: %d ms"
     val CODE_COLOR = 80
     val parser = new RuleBasedParser
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
 
-    val segmentStat = new Label()
-    val tokensStat = new Label()
-    val timeStat = new Label()
-    val generateBtn = new Button("Generate")
+    val segmentStat = new Label("", null, Alignment.Left)
+    val tokensStat = new Label("", null, Alignment.Left)
+    val timeStat = new Label("", null, Alignment.Left)
+    val editorLabel = new Label("Editor:", null, Alignment.Left) {
+        border = EmptyBorder(5, 2, 5, 2)
+        font = font.deriveFont(Font.BOLD)
+    }
+    val generateBtn = new Button("Refresh")
     val minusBtn = new Button("-")
     val plusBtn = new Button("+")
-
-    val definitionList = new ComboBox[DefinitionSource](definitions) {
-        selection.index = 0
-        peer.setMaximumRowCount(20)
+    val menu = new MenuBar {
+        contents += new Menu("Load example") {
+            definitions.foreach(ds => contents += new MenuItem(Action(ds.name) {
+                selectExample(ds)
+            }))
+        }
+        contents += new Menu("Help") {
+            contents += new MenuItem("License")
+            contents += new MenuItem("User manual")
+        }
     }
-
     val editor = new TextArea(definitions.head.source, 5, 20) {
         font = new Font("Monospaced", Font.BOLD, 16)
         foreground = new Color(CODE_COLOR, CODE_COLOR, CODE_COLOR)
     }
-
     val depth = new TextField("1", 3) {
         verifier = (txt: String) => try { txt.toInt ; true} catch { case t: Throwable => false }
     }
-
     val fractalPanel = new Panel {
         override def paintComponent(g: Graphics2D) {
             super.paintComponent(g)
@@ -78,7 +85,7 @@ object Main extends SimpleSwingApplication {
             contents += plusBtn
             contents += generateBtn
         }
-        layout(definitionList) = North
+        layout(editorLabel) = North
         layout(rightSection) = Center
         layout(bottomBar) = South
     }
@@ -90,14 +97,15 @@ object Main extends SimpleSwingApplication {
     }
 
     lazy val topFrame = new MainFrame {
-        title = "Frac"
+        title = "Frac v1.0"
         contents = new BorderPanel {
             preferredSize = (1600,1000)
             opaque = true
             layout(center) = Center
         }
+        menuBar = menu
         centerOnScreen()
-        listenTo(this, minusBtn, plusBtn, generateBtn, definitionList.selection)
+        listenTo(this, minusBtn, plusBtn, generateBtn)
         defaultButton = generateBtn
         reactions += {
             case ButtonClicked(`minusBtn`) =>
@@ -108,8 +116,6 @@ object Main extends SimpleSwingApplication {
                 refresh()
             case ButtonClicked(`generateBtn`) =>
                 refresh()
-            case SelectionChanged(`definitionList`) =>
-                select()
             case WindowClosing(e) =>
                 println("Exiting...")
                 System.exit(0)
@@ -118,9 +124,9 @@ object Main extends SimpleSwingApplication {
 
     def top = topFrame
 
-    def select()
+    def selectExample(example: DefinitionSource)
     {
-        editor.text = definitions(definitionList.selection.index).source
+        editor.text = example.source
         depth.text = "1"
         refresh()
     }
