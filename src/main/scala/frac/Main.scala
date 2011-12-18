@@ -19,13 +19,16 @@ import swing._
 import event._
 import Swing._
 import BorderPanel.Position._
-import java.awt.{Font, Color}
+import java.awt.{GraphicsEnvironment, Font, Color}
 
 object Main extends SimpleSwingApplication {
+
+    //GraphicsEnvironment.getLocalGraphicsEnvironment.getAvailableFontFamilyNames.foreach(println(_))
 
     val SEGMENT_STAT_TEMPLATE = "Segments: %d"
     val TOKEN_STAT_TEMPLATE = "Tokens: %d"
     val TIME_STAT_TEMPLATE = "Time: %d ms"
+    val CODE_COLOR = 80
     val parser = new RuleBasedParser
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
@@ -43,8 +46,8 @@ object Main extends SimpleSwingApplication {
     }
 
     val editor = new TextArea(definitions.head.source, 5, 20) {
-        font = new Font("Verdana", Font.BOLD, 20)
-        foreground = new Color(100, 100, 100)
+        font = new Font("Monospaced", Font.BOLD, 16)
+        foreground = new Color(CODE_COLOR, CODE_COLOR, CODE_COLOR)
     }
 
     val depth = new TextField("1", 3) {
