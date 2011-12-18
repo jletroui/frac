@@ -1,7 +1,7 @@
 frac - fractal lines drawer
 ===========================
 
-frac is an application allowing you to program an infinite number of fractal using simple [L-System](http://en.wikipedia.org/wiki/L-system) definitions.
+frac is an application allowing you to program an infinite number of fractal curves using simple [L-System](http://en.wikipedia.org/wiki/L-system) definitions.
 L-System grammars allows to define complex looking curve with extremely simple definitions. It is in particular used with a good deal of success at modeling [plants](http://algorithmicbotany.org/papers/).
 For a good introduction, I suggest reading this [paper](http://algorithmicbotany.org/papers/abop/abop-ch1.pdf) on the subject.
 
@@ -91,3 +91,11 @@ Constants
         angle = 25
         seed = F
         F = F[+F]F[-F]F
+
+Statistics
+==========
+
+- **Turtle moves**: the number of time the turtle moved, wheter drawing or not. It is effectively a count of the 'F' and 'f' characters in the final sequence.
+- **Turtle turns**: the number of time the turtle turned (ie: number of '-' and '+' in the final sequence).
+- **Sequence length**: the total number of characters in the final sequence.
+- **Drawing time**: in milliseconds. Look for this one when drawing deeper and deeper. I might take a very long time for frac to draw certain curves at a depth of more than 4.
