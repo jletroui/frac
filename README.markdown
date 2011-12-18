@@ -5,6 +5,10 @@ frac is an application allowing you to program an infinite number of fractal cur
 L-System grammars allows to define complex looking curve with extremely simple definitions. It is in particular used with a good deal of success at modeling [plants](http://algorithmicbotany.org/papers/).
 For a good introduction, I suggest reading this [paper](http://algorithmicbotany.org/papers/abop/abop-ch1.pdf) on the subject.
 
+
+![Frac 1.0 screenshot](https://raw.github.com/jletroui/frac/master/frac_screenshot.png)
+
+
 frac programming is simple. You can type your definition as free text in the editor area, and lick "Refresh" to see the result.
 Graphical primitives allows you to direct a virtual "turtle" that is holding a pen and reading a sequence of characters, as in the [LOGO programming language](http://en.wikipedia.org/wiki/Turtle_graphics).
 
