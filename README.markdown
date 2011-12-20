@@ -18,7 +18,7 @@ Download and installation
 You can download frac in the "Downloads" section. You need a Java runtime 6 or greater in order to run frac. On most systems, just double click on the jar you downloaded.
 You can also type this command in a terminal:
 
-   java -jar frac-1.0.jar
+    java -jar frac-1.0.jar
 
 Most basic definition
 =====================
@@ -104,8 +104,10 @@ Constants
         seed = F
         F = F[+F]F[-F]F
 
-Statistics
-==========
+Drawing statistics
+==================
+
+frac is giving you statistics on the curves currently displayed:
 
 - **Turtle moves**: the number of time the turtle moved, wheter drawing or not. It is effectively a count of the 'F' and 'f' characters in the final sequence.
 - **Turtle turns**: the number of time the turtle turned (ie: number of '-' and '+' in the final sequence).

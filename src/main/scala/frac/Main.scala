@@ -21,6 +21,8 @@ import Swing._
 import BorderPanel.Position._
 import java.awt.{Desktop, GraphicsEnvironment, Font, Color}
 import java.net.URI
+import javax.swing.KeyStroke
+import java.awt.event.{InputEvent, KeyEvent}
 
 object Main extends SimpleSwingApplication {
 
@@ -35,18 +37,45 @@ object Main extends SimpleSwingApplication {
     val definitions = new DefaultDefinitionRepository().getDefinitions
     var definition = parser.parse(definitions(0).source)
 
-    val turtleMovesStat = new Label//("", null, Alignment.Left)
-    val turtleTurnsStat = new Label//("", null, Alignment.Left)
-    val squenceLengthStat = new Label//("", null, Alignment.Left)
-    val durationStat = new Label//("", null, Alignment.Left)
-    val generateBtn = new Button("Refresh")
-    val minusBtn = new Button("-")
-    val plusBtn = new Button("+")
+    val refreshAction = new Action("Refresh") {
+        override def apply() { refresh() }
+        accelerator = Some(KeyStroke.getKeyStroke("F5"))
+    }
+    val increaseDepthAction = new Action("+") {
+        override def apply() { increaseDepth() }
+        accelerator = Some(KeyStroke.getKeyStroke("F6"))
+        longDescription = "Increase depth"
+    }
+    val decreaseDepthAction = new Action("-") {
+        override def apply() { decreaseDepth() }
+        accelerator = Some(KeyStroke.getKeyStroke("F4"))
+        longDescription = "Decrease depth"
+    }
+
+    val turtleMovesStat = new Label
+    val turtleTurnsStat = new Label
+    val squenceLengthStat = new Label
+    val durationStat = new Label
     val menu = new MenuBar {
         contents += new Menu("Load example") {
             definitions.foreach(ds => contents += new MenuItem(Action(ds.name) {
                 selectExample(ds)
             }))
+        }
+        contents += new Menu("View") {
+            contents += new MenuItem(refreshAction)
+            contents += new MenuItem("Decrease depth") {
+                reactions += {
+                    case ButtonClicked(_) => decreaseDepth()
+                }
+                peer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0))
+            }
+            contents += new MenuItem("Increase depth") {
+                reactions += {
+                    case ButtonClicked(_) => increaseDepth()
+                }
+                peer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0))
+            }
         }
         contents += new Menu("Help") {
             contents += new MenuItem(Action("User manual") { browse("https://github.com/jletroui/frac/blob/master/README.markdown") })
@@ -90,11 +119,11 @@ object Main extends SimpleSwingApplication {
         contents += new BoxPanel(Orientation.Horizontal) {
             contents += HGlue
             contents += new Label("Depth: ")
-            contents += minusBtn
+            contents += new Button(decreaseDepthAction)
             contents += depth
-            contents += plusBtn
+            contents += new Button(increaseDepthAction)
             contents += HStrut(10)
-            contents += generateBtn
+            contents += new Button(refreshAction)
         }
     }
 
@@ -113,17 +142,8 @@ object Main extends SimpleSwingApplication {
         }
         menuBar = menu
         centerOnScreen()
-        listenTo(this, minusBtn, plusBtn, generateBtn)
-        defaultButton = generateBtn
+        listenTo(this)
         reactions += {
-            case ButtonClicked(`minusBtn`) =>
-                depth.text = (depth.text.toInt - 1).toString
-                refresh()
-            case ButtonClicked(`plusBtn`) =>
-                depth.text = (depth.text.toInt + 1).toString
-                refresh()
-            case ButtonClicked(`generateBtn`) =>
-                refresh()
             case WindowClosing(e) =>
                 println("Exiting...")
                 System.exit(0)
@@ -131,6 +151,18 @@ object Main extends SimpleSwingApplication {
     }
 
     def top = topFrame
+
+    def increaseDepth()
+    {
+        depth.text = (depth.text.toInt + 1).toString
+        refresh()
+    }
+
+    def decreaseDepth()
+    {
+        depth.text = (depth.text.toInt - 1).toString
+        refresh()
+    }
 
     def selectExample(example: DefinitionSource)
     {
