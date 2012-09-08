@@ -17,7 +17,7 @@ package frac
 
 import org.specs2.mutable._
 
-class RuleBasedDefinitionSpec extends SpecificationWithJUnit
+class RuleBasedDefinitionSpec extends Specification
 {
     val renderer = new StringRenderer
 

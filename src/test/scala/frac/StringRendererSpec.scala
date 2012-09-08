@@ -17,7 +17,7 @@ package frac
 
 import org.specs2.mutable._
 
-class StringRendererSpec extends SpecificationWithJUnit
+class StringRendererSpec extends Specification
 {
     val definition = new Definition {
         val turnAngle = 90.0

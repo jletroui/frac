@@ -17,7 +17,7 @@ package frac
 
 import org.specs2.mutable._
 
-class RuleBasedParserSpec extends SpecificationWithJUnit
+class RuleBasedParserSpec extends Specification
 {
     val text = """seed=F
 angle=60
