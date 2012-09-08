@@ -8,22 +8,22 @@ import math._
 case class Point(x: Double, y: Double)
 case class RendererStats(turtleMoves: Int, turtleTurns: Int, sequenceLength: Int, duration: Long)
 
-class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
-{
-    private val MARGIN = 20
-    private var position = Point(0, 0)
-    private var heading = 0.0
-    private var turnAngle = Pi / 2
-    private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
-    private var travelLength = 10.0
-    private var stateStack = Stack.empty[TurtleState]
-    private var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
-    private var repetitionCount = 1
+/** Renders the given definition on an AWT graphics */
+class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
+    private[this] val DIGIT = """([1-9])""".r
+    private[this] val MARGIN = 20
+    private[this] var position = Point(0, 0)
+    private[this] var heading = 0.0
+    private[this] var turnAngle = Pi / 2
+    private[this] var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
+    private[this] var travelLength = 10.0
+    private[this] var stateStack = Stack.empty[TurtleState]
+    private[this] var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
+    private[this] var repetitionCount = 1
 
     private case class TurtleState(position: Point, heading: Double, moveLength: Double)
 
-    def render(definition: Definition, depth: Int) : RendererStats =
-    {
+    def render(definition: Definition, depth: Int) : RendererStats = {
         val start = new Date().getTime
         // Dry run to compute size
         init(Point(0, 0) -> 10.0, definition)
@@ -36,8 +36,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         RendererStats(turtleMovesCounter, turtleTurnsCounter, sequenceCounter, new Date().getTime - start)
     }
 
-    private def init(transformation: (Point, Double), definition: Definition)
-    {
+    private def init(transformation: (Point, Double), definition: Definition) {
         position = transformation._1
         heading = definition.startingPoint match {
             case StartingPoint.Left => 0.0
@@ -54,8 +53,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
     }
 
     /** Look what is the scaling and translation that must be applied to fill the drawing space */
-    private def computeTransformation =
-    {
+    private def computeTransformation = {
         val (boundsWidth, boundsHeight) = (g.getClipBounds.width.toDouble - 2 * MARGIN, g.getClipBounds.height.toDouble - 2 * MARGIN)
         val (width, height) = (maxPoint.x - minPoint.x, maxPoint.y - minPoint.y)
         val (boundsRatio, ratio) = (boundsWidth / boundsHeight, width / height)
@@ -66,50 +64,51 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         (Point(MARGIN - minPoint.x * scale + (boundsWidth - scaledWidth) / 2, MARGIN - minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
     }
 
+
     /** Interpret the given character and update state accordingly */
-    private def callback(draw: Boolean, scaleRatio: Double)(c: Char)
-    {
+    private def callback(draw: Boolean, scaleRatio: Double)(c: String) {
         c match {
-            case '+' =>
+            case "+" =>
                 heading -= turnAngle * repetitionCount
                 turtleTurnsCounter += repetitionCount
                 repetitionCount = 1
-            case '-' =>
+            case "-" =>
                 heading += turnAngle * repetitionCount
                 turtleTurnsCounter += repetitionCount
                 repetitionCount = 1
-            case 'F' =>
+            case "F" =>
                 move(draw)
                 turtleMovesCounter += repetitionCount
                 repetitionCount = 1
-            case 'f' =>
+            case "f" =>
                 move(false)
                 turtleMovesCounter += repetitionCount
                 repetitionCount = 1
-            case '['=>
+            case "["=>
                 stateStack = stateStack.push(TurtleState(position, heading, travelLength))
-            case ']'=>
+            case "]"=>
                 val (state, newStack) = stateStack.pop2
                 heading = state.heading
                 travelLength = state.moveLength
                 position = state.position
                 stateStack = newStack
-            case '>' =>
+            case ">" =>
               travelLength *= scaleRatio
               repetitionCount = 1
-            case '<' =>
+            case "<" =>
               travelLength /= scaleRatio
               repetitionCount = 1
-            case number if number > '1' && number <= '9' => repetitionCount = number.toString.toInt
-            case _ => () // Ignores all other characters
+            case DIGIT(number) =>
+              repetitionCount = number.toString.toInt
+            case _ =>
+              () // Ignores all other characters
         }
 
         sequenceCounter += 1
     }
 
     /** Move the turtle, and optionally draws the movement */
-    private def move(draw: Boolean)
-    {
+    private def move(draw: Boolean) {
         val newPoint = Point(
             position.x + travelLength * repetitionCount * cos(heading),
             position.y + travelLength * repetitionCount * sin(heading))

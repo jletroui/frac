@@ -23,9 +23,9 @@ class StringRendererSpec extends Specification
         val turnAngle = 90.0
         val scaleRatio = 0.5
         val startingPoint = StartingPoint.Left
-        def run(depth: Int, callback: (Char) => Unit)
+        def run(depth: Int, callback: String => Unit)
         {
-            Range(0, depth).foreach(i => callback((48 + i).toChar))
+            Range(0, depth).foreach(i => callback((48 + i).toString))
         }
     }
     val sut = new StringRenderer

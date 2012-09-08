@@ -17,6 +17,7 @@ package frac
 
 import java.lang.StringBuffer
 
+/** Renders the given definition in a simple string */
 class StringRenderer extends Renderer[String]
 {
     def render(definition: Definition, depth: Int): String = {

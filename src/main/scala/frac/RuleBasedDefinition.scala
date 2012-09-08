@@ -15,42 +15,41 @@
  */
 package frac
 
+/** The heart of the L-System. This is parsing and executing definitions in the form of simple rules */
 class RuleBasedDefinition(seed: String,
                           rules: Map[Char, String],
                           turnAngleDeg: Int = 90,
                           val scaleRatio: Double = 0.5,
-                          val startingPoint : StartingPoint.Value = StartingPoint.Left) extends Definition
-{
+                          val startingPoint : StartingPoint.Value = StartingPoint.Left) extends Definition {
     val turnAngle = turnAngleDeg.toRad
 
-    private class Token(character: Char, var rule: List[Token] = Nil)
-    {
-        def apply(level: Int, callback: Char => Unit)
-        {
+    /** AST structure. Represents a primitive or rule. */
+    private class Token(character: String, var rule: List[Token] = Nil) {
+        def this(c: Char) = this(c.toString)
+
+        def apply(level: Int, callback: String => Unit) {
             if (level > 0 && rule.size > 0) rule.foreach(_.apply(level - 1, callback))
             else callback(character)
         }
     }
 
     // Create a token for each rule
-    private var compiledMap = rules.map(pair => pair._1 -> new Token(pair._1))
+    private var compiledMap = rules.map { case (character, _) => character -> new Token(character) }
 
     // Map the rules to token lists
-    compiledMap.foreach { pair =>
-        val (character, token) = pair
-        token.rule =  rules(character).map { c =>
-            if (!compiledMap.contains(c)) compiledMap = compiledMap.updated(c, new Token(c))
-            compiledMap(c)
-        }.toList
+    compiledMap.foreach { case (character, token) =>
+        token.rule = toTokenList(rules(character))
     }
 
     // Map the seed to a token list
-    private val compiledSeed = seed.map { c =>
-        if (!compiledMap.contains(c)) compiledMap = compiledMap.updated(c, new Token(c))
-        compiledMap(c)
+    private val compiledSeed = toTokenList(seed)
+
+    private def toTokenList(ruleValue: String) = ruleValue.map { c =>
+      if (!compiledMap.contains(c)) compiledMap = compiledMap.updated(c, new Token(c))
+      compiledMap(c)
     }.toList
 
-    def run(depth: Int, callback: Char => Unit) {
+    def run(depth: Int, callback: String => Unit) {
         compiledSeed.foreach(_(depth, callback))
     }
 }

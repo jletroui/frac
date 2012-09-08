@@ -15,10 +15,12 @@
  */
 package frac
 
+/** Parses textual rules for a L-System definition */
 class RuleBasedParser extends DefinitionParser
 {
     def parse(text: String) =
     {
+        // Defaults
         var angle = 90
         var ratio = 0.5
         var start = StartingPoint.Left
