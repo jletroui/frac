@@ -18,7 +18,7 @@ package frac
 import java.io.{InputStreamReader, Reader, BufferedInputStream, BufferedReader}
 import java.lang.StringBuffer
 
-
+/** Reads the definition.frac file and parses the definitions */
 class DefaultDefinitionRepository extends DefinitionRepository with Using
 {
     private var sources = List.empty[DefinitionSource]

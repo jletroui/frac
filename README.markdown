@@ -57,6 +57,9 @@ The above definition is using 2 primitives: *F* and *+*. *F* instruct the turtle
 - **]**: unstack and restore the corresponding turtle's position, heading, and moving length. The following example is drawing 3 branches:
 
         seed = [F][+F][-F]
+- **1-9**: the number of times the next graphical primitive will be applied. It only applies to the very next primitive. The following example is drawing a segment 3 times longer than usual:
+
+        seed = 3F
 
 Definining replacement rules
 ============================
@@ -112,4 +115,4 @@ frac is giving you statistics on the curves currently displayed:
 - **Turtle moves**: the number of time the turtle moved, wheter drawing or not. It is effectively a count of the 'F' and 'f' characters in the final sequence.
 - **Turtle turns**: the number of time the turtle turned (ie: number of '-' and '+' in the final sequence).
 - **Sequence length**: the total number of characters in the final sequence.
-- **Drawing time**: in milliseconds. Look for this one when drawing deeper and deeper. I might take a very long time for frac to draw certain curves at a depth of more than 4.
+- **Drawing time**: in milliseconds. Look for this one when drawing deeper and deeper. It might take a very long time for frac to draw certain curves at a depth of more than 4.

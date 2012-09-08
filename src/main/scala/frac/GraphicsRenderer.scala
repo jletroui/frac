@@ -3,6 +3,7 @@ package frac
 import java.awt.Graphics
 import collection.immutable.Stack
 import java.util.Date
+import math._
 
 case class Point(x: Double, y: Double)
 case class RendererStats(turtleMoves: Int, turtleTurns: Int, sequenceLength: Int, duration: Long)
@@ -12,11 +13,12 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
     private val MARGIN = 20
     private var position = Point(0, 0)
     private var heading = 0.0
-    private var turnAngle = math.Pi / 2
+    private var turnAngle = Pi / 2
     private var (minPoint, maxPoint) = (Point(0, 0), Point(0, 0))
     private var travelLength = 10.0
     private var stateStack = Stack.empty[TurtleState]
     private var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
+    private var repetitionCount = 1
 
     private case class TurtleState(position: Point, heading: Double, moveLength: Double)
 
@@ -39,7 +41,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         position = transformation._1
         heading = definition.startingPoint match {
             case StartingPoint.Left => 0.0
-            case StartingPoint.Bottom => -math.Pi / 2
+            case StartingPoint.Bottom => -Pi / 2
         }
         travelLength = transformation._2
         this.turnAngle = definition.turnAngle
@@ -51,6 +53,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         sequenceCounter = 0
     }
 
+    /** Look what is the scaling and translation that must be applied to fill the drawing space */
     private def computeTransformation =
     {
         val (boundsWidth, boundsHeight) = (g.getClipBounds.width.toDouble - 2 * MARGIN, g.getClipBounds.height.toDouble - 2 * MARGIN)
@@ -63,21 +66,26 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
         (Point(MARGIN - minPoint.x * scale + (boundsWidth - scaledWidth) / 2, MARGIN - minPoint.y * scale + (boundsHeight - scaledHeight) / 2), scale * 10.0)
     }
 
+    /** Interpret the given character and update state accordingly */
     private def callback(draw: Boolean, scaleRatio: Double)(c: Char)
     {
         c match {
             case '+' =>
-                heading -= turnAngle
-                turtleTurnsCounter += 1
+                heading -= turnAngle * repetitionCount
+                turtleTurnsCounter += repetitionCount
+                repetitionCount = 1
             case '-' =>
-                heading += turnAngle
-                turtleTurnsCounter += 1
+                heading += turnAngle * repetitionCount
+                turtleTurnsCounter += repetitionCount
+                repetitionCount = 1
             case 'F' =>
                 move(draw)
-                turtleMovesCounter += 1
+                turtleMovesCounter += repetitionCount
+                repetitionCount = 1
             case 'f' =>
                 move(false)
-                turtleMovesCounter += 1
+                turtleMovesCounter += repetitionCount
+                repetitionCount = 1
             case '['=>
                 stateStack = stateStack.push(TurtleState(position, heading, travelLength))
             case ']'=>
@@ -86,19 +94,25 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats]
                 travelLength = state.moveLength
                 position = state.position
                 stateStack = newStack
-            case '>' => travelLength *= scaleRatio
-            case '<' => travelLength /= scaleRatio
+            case '>' =>
+              travelLength *= scaleRatio
+              repetitionCount = 1
+            case '<' =>
+              travelLength /= scaleRatio
+              repetitionCount = 1
+            case number if number > '1' && number <= '9' => repetitionCount = number.toString.toInt
             case _ => () // Ignores all other characters
         }
 
         sequenceCounter += 1
     }
 
+    /** Move the turtle, and optionally draws the movement */
     private def move(draw: Boolean)
     {
         val newPoint = Point(
-            position.x + travelLength * math.cos(heading),
-            position.y + travelLength * math.sin(heading))
+            position.x + travelLength * repetitionCount * cos(heading),
+            position.y + travelLength * repetitionCount * sin(heading))
 
         if (newPoint.x < minPoint.x) minPoint = minPoint.copy(x = newPoint.x)
         if (newPoint.y < minPoint.y) minPoint = minPoint.copy(y = newPoint.y)
