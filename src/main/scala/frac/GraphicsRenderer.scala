@@ -1,6 +1,6 @@
 package frac
 
-import java.awt.Graphics
+import java.awt.{Color, Graphics}
 import collection.immutable.Stack
 import java.util.Date
 import math._
@@ -20,6 +20,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
   private[this] var stateStack = Stack.empty[TurtleState]
   private[this] var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
   private[this] var repetitionCount = 1
+  private[this] var strokeColor = Color.black
 
   private case class TurtleState(position: Point, heading: Double, moveLength: Double)
 
@@ -100,6 +101,9 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
         repetitionCount = 1
       case Primitive(DIGIT(number)) =>
         repetitionCount = number.toString.toInt
+      case colorStatement : ColorStatement =>
+        strokeColor = colorStatement.changeColor(strokeColor)
+        g.setColor(strokeColor)
       case _ =>
         () // Ignores all other characters
     }
