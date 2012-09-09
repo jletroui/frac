@@ -15,7 +15,6 @@
  */
 package frac
 
-trait DefinitionParser
-{
-    def parse(text: String): Definition
+trait DefinitionParser {
+  def parse(text: String): Definition
 }

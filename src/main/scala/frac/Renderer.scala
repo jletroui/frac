@@ -15,7 +15,6 @@ package frac
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-trait Renderer[A]
-{
-    def render(definition: Definition, depth: Int): A
+trait Renderer[A] {
+  def render(definition: Definition, depth: Int): A
 }

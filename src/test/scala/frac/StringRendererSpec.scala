@@ -17,28 +17,24 @@ package frac
 
 import org.specs2.mutable._
 
-class StringRendererSpec extends Specification
-{
-    val definition = new Definition {
-        val turnAngle = 90.0
-        val scaleRatio = 0.5
-        val startingPoint = StartingPoint.Left
-        def run(depth: Int, callback: String => Unit)
-        {
-            Range(0, depth).foreach(i => callback((48 + i).toString))
-        }
+class StringRendererSpec extends Specification {
+  val definition = new Definition {
+    val turnAngle = 90.0
+    val scaleRatio = 0.5
+    val startingPoint = StartingPoint.Left
+    def run(depth: Int, callback: Token => Unit) {
+      Range(0, depth).foreach(i => callback(Primitive((48 + i).toChar.toString)))
     }
-    val sut = new StringRenderer
+  }
+  val sut = new StringRenderer
 
-    "a string renderer" should {
-        "render all characters" in {
-            sut.render(definition, 4).length() must beEqualTo(4)
-        }
-
-        "render the right characters" in {
-            sut.render(definition, 4) must beEqualTo("0123")
-        }
-
-
+  "a string renderer" should {
+    "render all characters" in {
+      sut.render(definition, 4).length() must beEqualTo(4)
     }
+
+    "render the right characters" in {
+      sut.render(definition, 4) must beEqualTo("0123")
+    }
+  }
 }

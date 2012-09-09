@@ -21,25 +21,25 @@ import java.lang.StringBuffer
 /** Reads the definition.frac file and parses the definitions */
 class DefaultDefinitionRepository extends DefinitionRepository with Using
 {
-    private var sources = List.empty[DefinitionSource]
-    using(Thread.currentThread.getContextClassLoader.getResourceAsStream("definitions.frac")) { is =>
-        using(new InputStreamReader(is)) { isr =>
-            using(new BufferedReader(isr)) { br =>
-                var line = br.readLine
-                while (line != null) {
-                    val name = line
-                    val buf = new StringBuffer()
-                    line = br.readLine
-                    while (line != null && line.length > 0) {
-                        buf.append(line).append("\n")
-                        line = br.readLine
-                    }
-                    sources = sources :+ DefinitionSource(name, buf.toString)
-                    while (line != null && line.length == 0) line = br.readLine
-                }
-            }
+  private var sources = List.empty[DefinitionSource]
+  using(Thread.currentThread.getContextClassLoader.getResourceAsStream("definitions.frac")) { is =>
+    using(new InputStreamReader(is)) { isr =>
+      using(new BufferedReader(isr)) { br =>
+        var line = br.readLine
+        while (line != null) {
+          val name = line
+          val buf = new StringBuffer()
+          line = br.readLine
+          while (line != null && line.length > 0) {
+            buf.append(line).append("\n")
+            line = br.readLine
+          }
+          sources = sources :+ DefinitionSource(name, buf.toString)
+          while (line != null && line.length == 0) line = br.readLine
         }
+      }
     }
+  }
 
-    def getDefinitions = sources
+  def getDefinitions = sources
 }

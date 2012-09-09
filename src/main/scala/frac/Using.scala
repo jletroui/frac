@@ -17,15 +17,13 @@ package frac
 
 import java.io.Closeable
 
-trait Using
-{
-    def using[A <: Closeable](closeable: A)(block: A => Unit)
-    {
-        try {
-            block(closeable)
-        }
-        finally {
-            if (closeable != null) closeable.close()
-        }
+trait Using {
+  def using[A <: Closeable](closeable: A)(block: A => Unit) {
+    try {
+      block(closeable)
     }
+    finally {
+      if (closeable != null) closeable.close()
+    }
+  }
 }

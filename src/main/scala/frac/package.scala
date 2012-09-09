@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-package object frac
-{
-    implicit def toRichInt(enriched: Int) = new RichInt(enriched)
+package object frac {
+  implicit def toRichInt(enriched: Int) = new RichInt(enriched)
 }

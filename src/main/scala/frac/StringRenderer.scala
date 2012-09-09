@@ -18,11 +18,10 @@ package frac
 import java.lang.StringBuffer
 
 /** Renders the given definition in a simple string */
-class StringRenderer extends Renderer[String]
-{
-    def render(definition: Definition, depth: Int): String = {
-        val res = new StringBuffer()
-        definition.run(depth, res.append(_))
-        res.toString
-    }
+class StringRenderer extends Renderer[String] {
+  def render(definition: Definition, depth: Int): String = {
+    val res = new StringBuffer()
+    definition.run(depth, t => res.append(t.toString))
+    res.toString
+  }
 }

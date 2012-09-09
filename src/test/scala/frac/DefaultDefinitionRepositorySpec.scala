@@ -17,19 +17,18 @@ package frac
 
 import org.specs2.mutable._
 
-class DefaultDefinitionRepositorySpec extends Specification
-{
-    val sut = new DefaultDefinitionRepository
-    val kochSrc = "angle = 60seed = FF = F+F--F+F"
+class DefaultDefinitionRepositorySpec extends Specification {
+  val sut = new DefaultDefinitionRepository
+  val kochSrc = "angle = 60seed = FF = F+F--F+F"
 
-    "definition repository" should {
-        "have definitions" in {
-            sut.getDefinitions.size must be_>(0)
-        }
-
-        "have the cross as the first definition" in {
-            sut.getDefinitions(0).source.replace("\r", "").replace("\n", "") must beEqualTo(kochSrc)
-        }
+  "definition repository" should {
+    "have definitions" in {
+      sut.getDefinitions.size must be_>(0)
     }
+
+    "have the cross as the first definition" in {
+      sut.getDefinitions(0).source.replace("\r", "").replace("\n", "") must beEqualTo(kochSrc)
+    }
+  }
 
 }

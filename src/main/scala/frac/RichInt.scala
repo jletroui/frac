@@ -15,7 +15,6 @@
  */
 package frac
 
-class RichInt(enriched: Int)
-{
-    def toRad = math.Pi * 2 * enriched / 360
+class RichInt(enriched: Int) {
+  def toRad = math.Pi * 2 * enriched / 360
 }

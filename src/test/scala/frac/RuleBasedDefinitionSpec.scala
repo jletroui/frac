@@ -17,35 +17,34 @@ package frac
 
 import org.specs2.mutable._
 
-class RuleBasedDefinitionSpec extends Specification
-{
-    val renderer = new StringRenderer
+class RuleBasedDefinitionSpec extends Specification {
+  val renderer = new StringRenderer
 
-    "a rules and seed definition" should {
-        "output seed when given no rules" in {
-            val sut = new RuleBasedDefinition("ABC", Map.empty[Char, String])
+  "a rules and seed definition" should {
+    "output seed when given no rules" in {
+      val sut = new RuleBasedDefinition("ABC", Map.empty[String, String])
 
-            renderer.render(sut, 2) must beEqualTo("ABC")
-        }
-        "apply rules" in {
-            val sut = new RuleBasedDefinition("AB", Map('A' -> "C", 'B' -> "D"))
-
-            renderer.render(sut, 2) must beEqualTo("CD")
-        }
-        "recurse once when depth is one" in {
-            val sut = new RuleBasedDefinition("AB", Map('A' -> "AA"))
-
-            renderer.render(sut, 1) must beEqualTo("AAB")
-        }
-        "don't recurse when depth 0" in {
-            val sut = new RuleBasedDefinition("AB", Map('A' -> "AA"))
-
-            renderer.render(sut, 0) must beEqualTo("AB")
-        }
-        "recurse 'depth' time" in {
-            val sut = new RuleBasedDefinition("AB", Map('A' -> "AA"))
-
-            renderer.render(sut, 3) must beEqualTo("AAAAAAAAB")
-        }
+      renderer.render(sut, 2) must beEqualTo("ABC")
     }
+    "apply rules" in {
+      val sut = new RuleBasedDefinition("AB", Map("A" -> "C", "B" -> "D"))
+
+      renderer.render(sut, 2) must beEqualTo("CD")
+    }
+    "recurse once when depth is one" in {
+      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+
+      renderer.render(sut, 1) must beEqualTo("AAB")
+    }
+    "don't recurse when depth 0" in {
+      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+
+      renderer.render(sut, 0) must beEqualTo("AB")
+    }
+    "recurse 'depth' time" in {
+      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+
+      renderer.render(sut, 3) must beEqualTo("AAAAAAAAB")
+    }
+  }
 }
