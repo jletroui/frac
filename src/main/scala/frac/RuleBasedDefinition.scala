@@ -15,6 +15,8 @@
  */
 package frac
 
+import annotation.tailrec
+
 /** The heart of the L-System. This is parsing and executing definitions in the form of simple rules */
 class RuleBasedDefinition(seed: String,
                           rules: Map[Char, String],
@@ -24,13 +26,25 @@ class RuleBasedDefinition(seed: String,
     val turnAngle = turnAngleDeg.toRad
 
     /** AST structure. Represents a primitive or rule. */
-    private class Token(character: String, var rule: List[Token] = Nil) {
+    private class Token(val character: String, var rule: List[Token] = Nil) {
         def this(c: Char) = this(c.toString)
 
-        def apply(level: Int, callback: String => Unit) {
-            if (level > 0 && rule.size > 0) rule.foreach(_.apply(level - 1, callback))
-            else callback(character)
+        def execute(level: Int, callback: String => Unit) {
+            executeRecurse(callback, List(level -> this))
         }
+
+        @tailrec
+        private def executeRecurse(callback: String => Unit, nextTokens: List[(Int, Token)]) { nextTokens match {
+            case Nil => ()
+            case (level, token) :: xs =>
+                if (level == 0 || token.rule.size== 0) {
+                    callback(token.character)
+                    executeRecurse(callback, xs)
+                }
+                else {
+                    executeRecurse(callback, token.rule.map((level - 1, _)) ::: xs)
+                }
+        }}
     }
 
     // Create a token for each rule
@@ -50,6 +64,6 @@ class RuleBasedDefinition(seed: String,
     }.toList
 
     def run(depth: Int, callback: String => Unit) {
-        compiledSeed.foreach(_(depth, callback))
+        compiledSeed.foreach(_.execute(depth, callback))
     }
 }
