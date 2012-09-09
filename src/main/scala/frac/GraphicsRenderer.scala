@@ -37,7 +37,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
   private[this] var repetitionCount = 1
   private[this] var strokeColor = Color.black
 
-  private case class TurtleState(position: Point, heading: Double, moveLength: Double)
+  private case class TurtleState(position: Point, heading: Double, moveLength: Double, strokeColor: Color)
 
   def render(definition: Definition, depth: Int) : RendererStats = {
     val start = new Date().getTime
@@ -101,12 +101,13 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
         turtleMovesCounter += repetitionCount
         repetitionCount = 1
       case Primitive("[") =>
-        stateStack = stateStack.push(TurtleState(position, heading, travelLength))
+        stateStack = stateStack.push(TurtleState(position, heading, travelLength, strokeColor))
       case Primitive("]") =>
         val (state, newStack) = stateStack.pop2
         heading = state.heading
         travelLength = state.moveLength
         position = state.position
+        strokeColor = state.strokeColor
         stateStack = newStack
       case Primitive(">") =>
         travelLength *= scaleRatio

@@ -53,13 +53,16 @@ The above definition is using 2 primitives: *F* and *+*. *F* instruct the turtle
         seed = F>+F>+F>+F
 
 - **<**: expands the length of the turtle moves from now on. This is the opposite of *<*.
-- **[**: saves the turtle's position, heading and moving length on top of a stack.
+- **[**: saves the turtle's position, heading, color, and moving length on top of a stack.
 - **]**: unstack and restore the corresponding turtle's position, heading, and moving length. The following example is drawing 3 branches:
 
         seed = [F][+F][-F]
 - **1-9**: the number of times the next graphical primitive will be applied. It only applies to the very next primitive. The following example is drawing a segment 3 times longer than usual:
 
         seed = 3F
+- **{r,g,b}**: sets the new stroke color by specifying red, green, and blue decimal values. The following example is a black segment then a green segment:
+
+        seed = F{0,255,0}F
 
 Definining replacement rules
 ============================

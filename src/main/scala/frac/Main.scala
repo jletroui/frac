@@ -131,7 +131,7 @@ object Main extends SimpleSwingApplication {
   }
 
   lazy val topFrame = new MainFrame {
-    title = "Frac 1.0"
+    title = "Frac 1.0.1"
     contents = new BorderPanel {
       preferredSize = (1600,1000)
       opaque = true

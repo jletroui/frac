@@ -10,7 +10,7 @@ object FracBuild extends Build {
     )
     .settings(assemblySettings :_*)
     .settings(
-      version := "1.0",
+      version := "1.0.1",
       organization := "ca.frac",
       scalaVersion := V.scala,
       scalacOptions := Seq("-encoding", "utf8"),
