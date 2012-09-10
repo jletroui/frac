@@ -17,28 +17,12 @@ package frac
 
 import java.awt.Color
 
+/** Represents the definition of a fractal curve */
 trait Definition {
   def turnAngle: Double
   def scaleRatio: Double
   def startingPoint: StartingPoint.Value
   def run(depth: Int, callback: Token => Unit)
-}
-
-trait Token
-
-case class Primitive(value: String) extends Token {
-  def this(c: Char) = this(c.toString)
-  override val toString = value
-}
-trait ColorStatement extends Token {
-  def changeColor(previousColor: Color): Color
-}
-object ConstantColorStatement {
-  def apply(r: Int, g: Int, b: Int): ConstantColorStatement = ConstantColorStatement(new Color(r, g, b))
-}
-case class ConstantColorStatement(color: Color) extends ColorStatement {
-  def changeColor(previousColor: Color) = color
-  override lazy val toString = "{%d,%d,%d}".format(color.getRed, color.getGreen, color.getBlue)
 }
 
 object StartingPoint extends Enumeration {

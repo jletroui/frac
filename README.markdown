@@ -60,9 +60,13 @@ The above definition is using 2 primitives: *F* and *+*. *F* instruct the turtle
 - **1-9**: the number of times the next graphical primitive will be applied. It only applies to the very next primitive. The following example is drawing a segment 3 times longer than usual:
 
         seed = 3F
-- **{r,g,b}**: sets the new stroke color by specifying red, green, and blue decimal values. The following example is drawing a black segment (default color) then a green segment:
+- **{r,g,b} or {nameOfColor} or {changeInRed,changeInGreen,changeInBlue}**: sets the new stroke color by specifying either:
+    - red, green, and blue decimal values: specifies a color by its RGB components.
+    - color name: specifies a color by its name. Available colors are black, blue, cyan, darkGray, gray, green, lightGray, magenta, orange, pink, red, white, yellow.
+    - increments (or decrements) of RGB components: this is changing the current active color.
+    - The following example is drawing a black segment (default color) then a green segment, then a red:
 
-        seed = F{0,255,0}F
+        seed = F{green}F{+255,-255,+0}F
 
 Definining replacement rules
 ============================

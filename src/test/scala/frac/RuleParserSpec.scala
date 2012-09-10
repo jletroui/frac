@@ -33,6 +33,12 @@ class RuleParserSpec extends Specification {
     "parse a color statement" in {
       sut.parseRule("{12,250,0}").result.get must beEqualTo(List(ConstantColorStatement(12, 250, 0)))
     }
+    "parse a predeined color statement" in {
+      sut.parseRule("{red}").result.get must beEqualTo(List(ConstantColorStatement("red")))
+    }
+    "parse a color increment statement" in {
+      sut.parseRule("{+10,+0,-10}").result.get must beEqualTo(List(IncrementColorStatement(10, 0, -10)))
+    }
     "parse a complex rule made of all possible elements" in {
       sut.parseRule("F{1,2,3}+").result.get must beEqualTo(List(Primitive("F"), ConstantColorStatement(1, 2, 3), Primitive("+")))
     }
