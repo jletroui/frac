@@ -8,6 +8,9 @@ For a good introduction, I suggest reading this [paper](http://algorithmicbotany
 
 ![Frac 1.0 screenshot](https://raw.github.com/jletroui/frac/master/frac_screenshot.png)
 
+The same tree, with colors:
+
+![Frac 1.0.1 screenshot](https://raw.github.com/jletroui/frac/master/frac_screenshot2.png)
 
 frac programming is simple. You can type your definition as free text in the editor area, and lick "Refresh" to see the result.
 Graphical primitives allows you to direct a virtual "turtle" that is holding a pen and reading a sequence of characters, as in the [LOGO programming language](http://en.wikipedia.org/wiki/Turtle_graphics).

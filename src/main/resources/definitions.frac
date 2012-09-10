@@ -155,6 +155,12 @@ angle = 22
 seed = F
 F = FF-[-F+F+F]+[+F-F-F]
 
+Tree 4 - Colored
+start = bottom
+angle = 22
+seed = F
+F = {120,0,0}FF-[{0,200,0}-F+F+F]+[{0,200,0}+F-F-F]
+
 Tree 5
 start = bottom
 angle = 20
