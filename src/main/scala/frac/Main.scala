@@ -30,9 +30,9 @@ object Main extends SimpleSwingApplication {
   val SEQUENCE_LENGTH_STAT_TEMPLATE = "Sequence length: %,d"
   val DURATION_STAT_TEMPLATE = "Drawing duration: %d ms"
   val CODE_COLOR = 80
-  val parser = new RuleBasedParser
-  val definitions = new DefaultDefinitionRepository().getDefinitions
-  var definition = parser.parse(definitions(0).source)
+  val parser = new FractalDefinitionParser
+  val definitions = DefaultDefinitionRepository.getDefinitions
+  var definition = definitions(0)
 
   val refreshAction = new Action("Refresh") {
     override def apply() { refresh() }
@@ -55,7 +55,7 @@ object Main extends SimpleSwingApplication {
   val durationStat = new Label
   val menu = new MenuBar {
     contents += new Menu("Load example") {
-      definitions.foreach(ds => contents += new MenuItem(Action(ds.name) {
+      definitions.foreach(ds => contents += new MenuItem(Action(ds.title) {
         selectExample(ds)
       }))
     }
@@ -79,7 +79,7 @@ object Main extends SimpleSwingApplication {
       contents += new MenuItem(Action("License") { browse("https://raw.github.com/jletroui/frac/master/LICENSE") })
     }
   }
-  val editor = new TextArea(definitions.head.source, 5, 20) {
+  val editor = new TextArea(definitions.head.sourceText, 5, 20) {
     font = new Font("Monospaced", Font.BOLD, 16)
     foreground = new Color(CODE_COLOR, CODE_COLOR, CODE_COLOR)
     border = TitledBorder(null, "Editor")
@@ -159,15 +159,15 @@ object Main extends SimpleSwingApplication {
     refresh()
   }
 
-  def selectExample(example: DefinitionSource) {
-    editor.text = example.source
+  def selectExample(example: FractalDefinition) {
+    editor.text = example.sourceText
     depth.text = "1"
     refresh()
   }
 
   def refresh() {
     try {
-      definition = parser.parse(editor.text)
+      definition = parser.parseFractalDefinition(editor.text).result.get
       fractalPanel.repaint()
     }
     catch {

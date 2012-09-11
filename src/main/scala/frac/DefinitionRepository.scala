@@ -15,10 +15,6 @@
  */
 package frac
 
-case class DefinitionSource(name: String, source: String) {
-  override def toString = name
-}
-
 trait DefinitionRepository {
-  def getDefinitions: List[DefinitionSource]
+  def getDefinitions: List[FractalDefinition]
 }

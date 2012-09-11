@@ -16,5 +16,5 @@ package frac
  * limitations under the License.
  */
 trait Renderer[A] {
-  def render(definition: Definition, depth: Int): A
+  def render(definition: FractalDefinition, depth: Int): A
 }

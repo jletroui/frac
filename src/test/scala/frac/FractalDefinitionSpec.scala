@@ -17,32 +17,55 @@ package frac
 
 import org.specs2.mutable._
 
-class RuleBasedDefinitionSpec extends Specification {
+class FractalDefinitionSpec extends Specification {
   val renderer = new StringRenderer
 
   "a rules and seed definition" should {
     "output seed when given no rules" in {
-      val sut = new RuleBasedDefinition("ABC", Map.empty[String, String])
+      val sut = FractalDefinition(
+        List(RuleReference('A'), RuleReference('B'), RuleReference('C'))
+      )
 
       renderer.render(sut, 2) must beEqualTo("ABC")
     }
     "apply rules" in {
-      val sut = new RuleBasedDefinition("AB", Map("A" -> "C", "B" -> "D"))
+      val sut = FractalDefinition(
+        List(RuleReference('A'), RuleReference('B')),
+        rules = List(
+          Rule('A', List(RuleReference('C'))),
+          Rule('B', List(RuleReference('D')))
+        )
+      )
 
       renderer.render(sut, 2) must beEqualTo("CD")
     }
     "recurse once when depth is one" in {
-      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+      val sut = FractalDefinition(
+        List(RuleReference('A'), RuleReference('B')),
+        rules = List(
+          Rule('A', List(RuleReference('A'), RuleReference('A')))
+        )
+      )
 
       renderer.render(sut, 1) must beEqualTo("AAB")
     }
     "don't recurse when depth 0" in {
-      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+      val sut = FractalDefinition(
+        List(RuleReference('A'), RuleReference('B')),
+        rules = List(
+          Rule('A', List(RuleReference('A'), RuleReference('A')))
+        )
+      )
 
       renderer.render(sut, 0) must beEqualTo("AB")
     }
     "recurse 'depth' time" in {
-      val sut = new RuleBasedDefinition("AB", Map("A" -> "AA"))
+      val sut = FractalDefinition(
+        List(RuleReference('A'), RuleReference('B')),
+        rules = List(
+          Rule('A', List(RuleReference('A'), RuleReference('A')))
+        )
+      )
 
       renderer.render(sut, 3) must beEqualTo("AAAAAAAAB")
     }

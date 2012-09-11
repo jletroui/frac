@@ -17,29 +17,13 @@ package frac
 
 import java.io.{InputStreamReader, Reader, BufferedInputStream, BufferedReader}
 import java.lang.StringBuffer
+import java.nio.file.{Paths, Files}
+import java.nio.charset.Charset
 
 /** Reads the definition.frac file and parses the definitions */
-class DefaultDefinitionRepository extends DefinitionRepository with Using
+object DefaultDefinitionRepository extends DefinitionRepository
 {
-  private var sources = List.empty[DefinitionSource]
-  using(Thread.currentThread.getContextClassLoader.getResourceAsStream("definitions.frac")) { is =>
-    using(new InputStreamReader(is)) { isr =>
-      using(new BufferedReader(isr)) { br =>
-        var line = br.readLine
-        while (line != null) {
-          val name = line
-          val buf = new StringBuffer()
-          line = br.readLine
-          while (line != null && line.length > 0) {
-            buf.append(line).append("\n")
-            line = br.readLine
-          }
-          sources = sources :+ DefinitionSource(name, buf.toString)
-          while (line != null && line.length == 0) line = br.readLine
-        }
-      }
-    }
-  }
-
-  def getDefinitions = sources
+  private[this] val path = Paths.get(Thread.currentThread.getContextClassLoader.getResource("definitions.frac").toURI)
+  private[this] val defintionText = new String(Files.readAllBytes(path), Charset.defaultCharset)
+  override val getDefinitions = new FractalDefinitionParser().parseFractalDefinitionList(defintionText).result.get
 }

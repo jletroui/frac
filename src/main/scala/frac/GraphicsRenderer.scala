@@ -39,20 +39,20 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
 
   private case class TurtleState(position: Point, heading: Double, moveLength: Double, strokeColor: Color)
 
-  def render(definition: Definition, depth: Int) : RendererStats = {
+  def render(definition: FractalDefinition, depth: Int) : RendererStats = {
     val start = new Date().getTime
     // Dry run to compute size
     init(Point(0, 0) -> 10.0, definition)
-    definition.run(depth, callback(false, definition.scaleRatio))
+    definition.execute(depth, callback(false, definition.scaleRatio))
 
     // Center, scale, and draw
     init(computeTransformation, definition)
-    definition.run(depth, callback(true, definition.scaleRatio))
+    definition.execute(depth, callback(true, definition.scaleRatio))
 
     RendererStats(turtleMovesCounter, turtleTurnsCounter, sequenceCounter, new Date().getTime - start)
   }
 
-  private def init(transformation: (Point, Double), definition: Definition) {
+  private def init(transformation: (Point, Double), definition: FractalDefinition) {
     position = transformation._1
     heading = definition.startingPoint match {
       case StartingPoint.Left => 0.0
@@ -82,42 +82,42 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
 
 
   /** Interpret the given character and update state accordingly */
-  private def callback(draw: Boolean, scaleRatio: Double)(c: Token) {
+  private def callback(draw: Boolean, scaleRatio: Double)(c: Symbol) {
     c match {
-      case Primitive("+") =>
+      case RuleReference('+') =>
         heading -= turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("-") =>
+      case RuleReference('-') =>
         heading += turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("F") =>
+      case RuleReference('F') =>
         move(draw)
         turtleMovesCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("f") =>
+      case RuleReference('f') =>
         move(false)
         turtleMovesCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("[") =>
+      case RuleReference('[') =>
         stateStack = stateStack.push(TurtleState(position, heading, travelLength, strokeColor))
-      case Primitive("]") =>
+      case RuleReference(']') =>
         val (state, newStack) = stateStack.pop2
         heading = state.heading
         travelLength = state.moveLength
         position = state.position
         strokeColor = state.strokeColor
         stateStack = newStack
-      case Primitive(">") =>
+      case RuleReference('>') =>
         travelLength *= scaleRatio
         repetitionCount = 1
-      case Primitive("<") =>
+      case RuleReference('<') =>
         travelLength /= scaleRatio
         repetitionCount = 1
-      case Primitive(DIGIT(number)) =>
+      case RuleReference(DIGIT(number)) =>
         repetitionCount = number.toString.toInt
-      case colorStatement : ColorStatement =>
+      case colorStatement : ColorOperation =>
         strokeColor = colorStatement.changeColor(strokeColor)
         g.setColor(strokeColor)
       case _ =>
