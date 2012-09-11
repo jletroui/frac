@@ -22,7 +22,7 @@ trait Definition {
   def turnAngle: Double
   def scaleRatio: Double
   def startingPoint: StartingPoint.Value
-  def run(depth: Int, callback: Token => Unit)
+  def run(depth: Int, callback: Symbol => Unit)
 }
 
 object StartingPoint extends Enumeration {

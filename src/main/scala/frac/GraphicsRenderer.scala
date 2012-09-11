@@ -82,42 +82,42 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
 
 
   /** Interpret the given character and update state accordingly */
-  private def callback(draw: Boolean, scaleRatio: Double)(c: Token) {
+  private def callback(draw: Boolean, scaleRatio: Double)(c: Symbol) {
     c match {
-      case Primitive("+") =>
+      case RuleReference("+") =>
         heading -= turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("-") =>
+      case RuleReference("-") =>
         heading += turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("F") =>
+      case RuleReference("F") =>
         move(draw)
         turtleMovesCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("f") =>
+      case RuleReference("f") =>
         move(false)
         turtleMovesCounter += repetitionCount
         repetitionCount = 1
-      case Primitive("[") =>
+      case RuleReference("[") =>
         stateStack = stateStack.push(TurtleState(position, heading, travelLength, strokeColor))
-      case Primitive("]") =>
+      case RuleReference("]") =>
         val (state, newStack) = stateStack.pop2
         heading = state.heading
         travelLength = state.moveLength
         position = state.position
         strokeColor = state.strokeColor
         stateStack = newStack
-      case Primitive(">") =>
+      case RuleReference(">") =>
         travelLength *= scaleRatio
         repetitionCount = 1
-      case Primitive("<") =>
+      case RuleReference("<") =>
         travelLength /= scaleRatio
         repetitionCount = 1
-      case Primitive(DIGIT(number)) =>
+      case RuleReference(DIGIT(number)) =>
         repetitionCount = number.toString.toInt
-      case colorStatement : ColorStatement =>
+      case colorStatement : ColorOperation =>
         strokeColor = colorStatement.changeColor(strokeColor)
         g.setColor(strokeColor)
       case _ =>

@@ -18,29 +18,29 @@ package frac
 import org.specs2.mutable._
 
 class RuleParserSpec extends Specification {
-  val sut = new RuleParser
+  val sut = new FractalDefinitionParser
 
   "The rule parser" should {
     "parse empty string rule" in {
       sut.parseRule("").result.get must beEqualTo(Nil)
     }
     "parse single primitive rule" in {
-      sut.parseRule("F").result.get must beEqualTo(List(Primitive("F")))
+      sut.parseRule("F").result.get must beEqualTo(List(RuleReference("F")))
     }
     "parse multiple primitives rule" in {
-      sut.parseRule("F+A").result.get must beEqualTo(List(Primitive("F"), Primitive("+"), Primitive("A")))
+      sut.parseRule("F+A").result.get must beEqualTo(List(RuleReference("F"), RuleReference("+"), RuleReference("A")))
     }
     "parse a color statement" in {
-      sut.parseRule("{12,250,0}").result.get must beEqualTo(List(ConstantColorStatement(12, 250, 0)))
+      sut.parseRule("{12,250,0}").result.get must beEqualTo(List(ConstantColorOperation(12, 250, 0)))
     }
     "parse a predeined color statement" in {
-      sut.parseRule("{red}").result.get must beEqualTo(List(ConstantColorStatement("red")))
+      sut.parseRule("{red}").result.get must beEqualTo(List(ConstantColorOperation("red")))
     }
     "parse a color increment statement" in {
-      sut.parseRule("{+10,+0,-10}").result.get must beEqualTo(List(IncrementColorStatement(10, 0, -10)))
+      sut.parseRule("{+10,+0,-10}").result.get must beEqualTo(List(IncrementColorOperation(10, 0, -10)))
     }
     "parse a complex rule made of all possible elements" in {
-      sut.parseRule("F{1,2,3}+").result.get must beEqualTo(List(Primitive("F"), ConstantColorStatement(1, 2, 3), Primitive("+")))
+      sut.parseRule("F{1,2,3}+").result.get must beEqualTo(List(RuleReference("F"), ConstantColorOperation(1, 2, 3), RuleReference("+")))
     }
   }
 }

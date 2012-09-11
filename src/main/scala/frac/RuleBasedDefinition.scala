@@ -26,13 +26,13 @@ class RuleBasedDefinition(seed: String,
   val turnAngle = turnAngleDeg.toRad
 
   /** AST structure. Represents a primitive or rule. */
-  private class CompiledToken(val token: Token, var rule: List[CompiledToken] = Nil) {
-    def execute(level: Int, callback: Token => Unit) {
+  private class CompiledToken(val token: Symbol, var rule: List[CompiledToken] = Nil) {
+    def execute(level: Int, callback: Symbol => Unit) {
       executeRecurse(callback, List(level -> this))
     }
 
     @tailrec
-    private def executeRecurse(callback: Token => Unit, nextTokens: List[(Int, CompiledToken)]) { nextTokens match {
+    private def executeRecurse(callback: Symbol => Unit, nextTokens: List[(Int, CompiledToken)]) { nextTokens match {
       case Nil => ()
       case (level, compiledToken) :: xs =>
         if (level == 0 || compiledToken.rule.size== 0) {
@@ -47,8 +47,8 @@ class RuleBasedDefinition(seed: String,
 
   // Create a token for each rule
   private var compiledMap = rules.map { case (character, _) =>
-    val token = new Primitive(character)
-    token.asInstanceOf[Token] -> new CompiledToken(token)
+    val token = new RuleReference(character)
+    token.asInstanceOf[Symbol] -> new CompiledToken(token)
   }
 
   // Map the rules to token lists
@@ -60,7 +60,7 @@ class RuleBasedDefinition(seed: String,
   private val compiledSeed = compileRule(seed)
 
   private def compileRule(ruleValue: String) = {
-    val tokens = new RuleParser().parseRule(ruleValue).result.get
+    val tokens = new FractalDefinitionParser().parseRule(ruleValue).result.get
     tokens.map { t =>
       // If we encounter this rule for the first time, add it to our map
       if (!compiledMap.contains(t)) compiledMap = compiledMap.updated(t, new CompiledToken(t))
@@ -69,7 +69,7 @@ class RuleBasedDefinition(seed: String,
     }
   }
 
-  def run(depth: Int, callback: Token => Unit) {
+  def run(depth: Int, callback: Symbol => Unit) {
     compiledSeed.foreach(_.execute(depth, callback))
   }
 }

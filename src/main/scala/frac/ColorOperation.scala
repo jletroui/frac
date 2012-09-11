@@ -18,8 +18,8 @@ package frac
 
 import java.awt.Color
 
-/** A color statement instructs for a change of color. It does not contain a rule */
-trait ColorStatement extends Token {
+/** A color operation instructs for a change of color. */
+trait ColorOperation extends Symbol {
   def changeColor(previousColor: Color): Color
 }
 
@@ -27,7 +27,7 @@ object ColorHelper {
   def colorComponent(unclean: Int) = if (unclean < 0) 256 + (unclean % 256) else unclean % 256
 }
 
-object ConstantColorStatement {
+object ConstantColorOperation {
   import ColorHelper._
 
   val predefined = classOf[Color]
@@ -36,25 +36,25 @@ object ConstantColorStatement {
     .map(f => f.getName -> f.get(null).asInstanceOf[Color])
     .toMap
 
-  def apply(r: Int, g: Int, b: Int): ConstantColorStatement = ConstantColorStatement(new Color(colorComponent(r), colorComponent(g), colorComponent(b)))
-  def apply(name: String): ConstantColorStatement = ConstantColorStatement(predefined(name))
+  def apply(r: Int, g: Int, b: Int): ConstantColorOperation = ConstantColorOperation(new Color(colorComponent(r), colorComponent(g), colorComponent(b)))
+  def apply(name: String): ConstantColorOperation = ConstantColorOperation(predefined(name))
 
   def findPredifinedName(c: Color) = predefined
     .find(_._2 == c)
     .map(_._1)
 }
-case class ConstantColorStatement(color: Color) extends ColorStatement {
+case class ConstantColorOperation(color: Color) extends ColorOperation {
   require(color != null, "color must not be null")
 
   def changeColor(previousColor: Color) = color
 
-  override lazy val toString = ConstantColorStatement.findPredifinedName(color) match {
+  override lazy val toString = ConstantColorOperation.findPredifinedName(color) match {
     case Some(name) => "{%s}".format(name)
     case _ => "{%d,%d,%d}".format(color.getRed, color.getGreen, color.getBlue)
   }
 }
 
-case class IncrementColorStatement(redIncrement: Int, greenIncrement: Int, blueIncrement: Int) extends ColorStatement {
+case class IncrementColorOperation(redIncrement: Int, greenIncrement: Int, blueIncrement: Int) extends ColorOperation {
   import ColorHelper._
 
   def changeColor(previousColor: Color) = new Color(
