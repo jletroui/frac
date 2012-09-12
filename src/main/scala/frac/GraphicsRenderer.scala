@@ -39,7 +39,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
 
   private case class TurtleState(position: Point, heading: Double, moveLength: Double, strokeColor: Color)
 
-  def render(definition: Definition, depth: Int) : RendererStats = {
+  def render(definition: FractalDefinition, depth: Int) : RendererStats = {
     val start = new Date().getTime
     // Dry run to compute size
     init(Point(0, 0) -> 10.0, definition)
@@ -52,7 +52,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
     RendererStats(turtleMovesCounter, turtleTurnsCounter, sequenceCounter, new Date().getTime - start)
   }
 
-  private def init(transformation: (Point, Double), definition: Definition) {
+  private def init(transformation: (Point, Double), definition: FractalDefinition) {
     position = transformation._1
     heading = definition.startingPoint match {
       case StartingPoint.Left => 0.0

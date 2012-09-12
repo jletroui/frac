@@ -18,7 +18,7 @@ package frac
 import org.specs2.mutable._
 
 class DefaultDefinitionRepositorySpec extends Specification {
-  val sut = new DefaultDefinitionRepository
+  val sut = DefaultDefinitionRepository
   val kochSrc = "angle = 60seed = FF = F+F--F+F"
 
   "definition repository" should {

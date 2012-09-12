@@ -18,11 +18,8 @@ package frac
 import org.specs2.mutable._
 
 class StringRendererSpec extends Specification {
-  val definition = new Definition {
-    val turnAngle = 90.0
-    val scaleRatio = 0.5
-    val startingPoint = StartingPoint.Left
-    def run(depth: Int, callback: Symbol => Unit) {
+  val definition = new FractalDefinition {
+    override def execute(depth: Int, callback: Symbol => Unit) {
       Range(0, depth).foreach(i => callback(RuleReference((48 + i).toChar.toString)))
     }
   }

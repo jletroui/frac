@@ -17,13 +17,42 @@
 package frac
 
 import frac._
+import annotation.tailrec
 
 case class FractalDefinition(
                               seed: List[Symbol],
+                              sourceText: String,
                               turnAngle: Double = 90.toRad,
                               scaleRatio: Double = 0.5,
+                              title: String = "",
                               startingPoint: StartingPoint.Value = StartingPoint.Left,
-                              rules: List[Rule] = Nil)
+                              rules: List[Rule] = Nil) {
+  private[this] lazy val ruleIndex = rules.map(rule => rule.name -> rule.expression).toMap
+
+  @tailrec
+  private[this] def executeRecurse(callback: Symbol => Unit, nextTokens: List[(Int, Symbol)]) { nextTokens match {
+    case Nil => ()
+    case (level, symbol) :: xs =>
+      if (level == 0 || !symbol.isInstanceOf[RuleReference]) {
+        callback(symbol)
+        executeRecurse(callback, xs)
+      }
+      else {
+        executeRecurse(callback, ruleFor(symbol).map((level - 1, _)) ::: xs)
+      }
+  }}
+
+  private[this] def ruleFor(symbol: Symbol) = symbol match {
+    case RuleReference(ruleName) => ruleIndex.get(ruleName).getOrElse(Nil)
+    case _ => Nil
+  }
+
+  def execute(depth: Int, callback: Symbol => Unit) { executeRecurse(callback, seed.map((depth, _))) }
+}
+
+object StartingPoint extends Enumeration {
+  val Left, Bottom = Value
+}
 
 case class Rule(name: Char, expression: List[Symbol])
 

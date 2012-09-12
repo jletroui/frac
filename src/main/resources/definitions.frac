@@ -1,174 +1,176 @@
-Koch line
+title = Koch line
 angle = 60
 seed = F
 F = F+F--F+F
 
-Cesaro line (Koch with 60 < angle < 90)
+title = Cesaro line (Koch with 60 < angle < 90)
 angle = 85
 seed = F
 F = F+F--F+F
 
-Koch snowflake
+title = Koch snowflake
 angle = 60
 seed = F++F++F
 F = F-F++F-F
 
-Koch star
+title = Koch star
 angle = 60
 seed = F+++F-F+++F-F+++F
 F = F-F++F-F
 
-Cross
+title = Cross
 seed = F-F-F-F
 F = F-F+F+F-F
 
-Spiral
+title = Spiral
 ratio = 0.8
 seed = G
 G = G>F-
 
-Sierpiensky triangle
+title = Sierpiensky triangle
 angle = 120
 seed = F+F+F
 F = F+F+F+FF
 
-Sierpiensky triangle variant
+title = Sierpiensky triangle variant
 angle = 60
 seed = X
 X = YF+XF+Y
 Y = XF-YF-X
 
-Peano
+title = Peano
 seed = F
 F = FF+F+F+FF+F+F-F
 
-Peano-Gosper
+title = Peano-Gosper
 angle = 60
 seed = X
 X = X+YF++YF-FX--FXFX-YF+
 Y = -FX+YFYF++YF+FX--FX-Y
 
-Hilbert
+title = Hilbert
 seed = X
 X = -YF+XFX+FY-
 Y = +XF-YFY-FX+
 
-Hilbert 2
+title = Hilbert 2
 seed = X
 X = XFYFX+F+YFXFY-F-XFYFX
 Y = YFXFY-F-XFYFX+F+YFXFY
 
-Hilbert 3
+title = Hilbert 3
 angle = 45
 seed = L
 L = L+F+R-F-L+F+R-F-L-F-R+F+L-F-R-F-L+F+R-F-L-F-R-F-L+F+R+F+L+F+R-F-L+F+R+F+L-F-R+F+L+F+R-F-L+F+R-F-L
 R = R-F-L+F+R-F-L+F+R+F+L-F-R+F+L+F+R-F-L+F+R+F+L+F+R-F-L-F-R-F-L+F+R-F-L-F-R+F+L-F-R-F-L+F+R-F-L+F+R
 
-Moore
+title = Moore
 seed = LFL+F+LFL
 L = -RF+LFL+FR-
 R = +LF-RFR-FL+
 
-Dragon
+title = Dragon
 seed =FX
 X = X+YF
 Y = FX-Y
 
-Terdragon
+title = Terdragon
 angle = 120
 seed = F
 F = F+F-F
 
-Quadradic type 1
+title = Quadradic type 1
 seed = F
 F = F+F-F-F+F
 
-Quadradic type 2
+title = Quadradic type 2
 seed = F
 F = F+F-F-FF+F+F-F
 
-Quadratic island
+title = Quadratic island
 seed = F+F+F+F
 F = F-F+F+FFF-F-F+F
 
-Island + lake
+title = Island + lake
 seed = F+F+F+F
 F = F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF
 f = ffffff
 
-Island 2
+title = Island 2
 seed = F-F-F-F
 F = FF-F-F-F-F-F+F
 
-Island 3
+title = Island 3
 seed = F-F-F-F
 F = FF-F-F-F-FF
 
-Island 4
+title = Island 4
 seed = F-F-F-F
 F = FF-F+F-F-FF
 
-Island 5
+title = Island 5
 seed = F-F-F-F
 F = FF-F--F-F
 
-Island 6
+title = Island 6
 seed = F-F-F-F
 F = F-FF--F-F
 
-Island 7
+title = Island 7
 seed = F-F-F-F
 F = F-F+F-F-F
 
-Square
+title = Square
 seed = F+XF+F+XF
 X = XF-F+F-XF+F+XF-F+F-X
 
-Simple tree
+title = Simple tree
 start = bottom
 angle = 45
 seed = FG
 G = [+FG]-FG
 F = FF
 
-Tree 1
+title = Tree 1
 start = bottom
 angle = 20
 seed = F
 F = F[+F][-F[-F]F]F[+F][-F]
 
-Tree 2
+title = Tree 2
 start = bottom
 angle = 25
 seed = F
 F = F[+F]F[-F]F
 
-Tree 3
+title = Tree 3
 start = bottom
 angle = 20
 seed = F
 F = F[+F]F[-F][F]
 
-Tree 4
+title = Tree 4
 start = bottom
 angle = 22
 seed = F
 F = FF-[-F+F+F]+[+F-F-F]
 
-Tree 4 - Colored
+title = Tree 4 - Colored
 start = bottom
 angle = 22
 seed = F
-F = {120,0,0}FF-[{0,200,0}-F+F+F]+[{0,200,0}+F-F-F]
+B = {120,0,0}
+G = {0,200,0}
+F = BFF-[G-F+F+F]+[G+F-F-F]
 
-Tree 5
+title = Tree 5
 start = bottom
 angle = 20
 seed = X
 X = F[+X]F[-X]+X
 F = FF
 
-Tree 6
+title = Tree 6
 start = bottom
 angle = 22
 seed = X
