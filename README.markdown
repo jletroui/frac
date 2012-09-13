@@ -21,7 +21,7 @@ Download and installation
 You can download frac in the "Downloads" section. You need a Java runtime 6 or greater in order to run frac. On most systems, just double click on the jar you downloaded.
 You can also type this command in a terminal:
 
-    java -jar frac-1.0.1.jar
+    java -jar frac-1.0.2.jar
 
 Most basic definition
 =====================
