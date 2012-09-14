@@ -117,6 +117,11 @@ Constants
         seed = F
         F = F[+F]F[-F]F
 
+Samples
+=======
+
+All samples are availabe in the menu. You can see the entire list [here](https://github.com/jletroui/frac/blob/master/src/main/resources/definitions.frac).
+
 Drawing statistics
 ==================
 
@@ -126,3 +131,8 @@ frac is giving you statistics on the curves currently displayed:
 - **Turtle turns**: the number of time the turtle turned (ie: number of '-' and '+' in the final sequence).
 - **Sequence length**: the total number of characters in the final sequence.
 - **Drawing time**: in milliseconds. Look for this one when drawing deeper and deeper. It might take a very long time for frac to draw certain curves at a depth of more than 4.
+
+Support
+=======
+
+You can submit bug reports [here on Github](https://github.com/jletroui/frac/issues).
