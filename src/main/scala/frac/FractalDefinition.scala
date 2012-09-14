@@ -43,7 +43,7 @@ case class FractalDefinition(
   }}
 
   private[this] def ruleFor(symbol: Symbol) = symbol match {
-    case RuleReference(ruleName) => ruleIndex.get(ruleName).getOrElse(Nil)
+    case RuleReference(ruleName, _) => ruleIndex.get(ruleName).getOrElse(Nil)
     case _ => Nil
   }
 
@@ -59,7 +59,11 @@ case class Rule(name: Char, expression: List[Symbol])
 /** Represents one symbol in a rule */
 trait Symbol
 
+object RuleReference {
+  def apply(repetition: Int, ruleName: Char): RuleReference = RuleReference(ruleName, repetition)
+}
+
 /** A primitive token. Primitives are token that have a rule to be executed */
-case class RuleReference(value: Char) extends Symbol {
-  override lazy val toString = new String(Array(value))
+case class RuleReference(ruleName: Char, repetition: Int = 1) extends Symbol {
+  override lazy val toString = new String(Array(ruleName))
 }

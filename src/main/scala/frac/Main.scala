@@ -31,7 +31,7 @@ object Main extends SimpleSwingApplication {
   val DURATION_STAT_TEMPLATE = "Drawing duration: %d ms"
   val CODE_COLOR = 80
   val parser = new FractalDefinitionParser
-  val definitions = DefaultDefinitionRepository.getDefinitions
+  val definitions = ExampleRepository.examples
   var definition = definitions(0)
 
   val refreshAction = new Action("Refresh") {

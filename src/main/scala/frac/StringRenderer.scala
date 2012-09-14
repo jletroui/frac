@@ -18,7 +18,7 @@ package frac
 import java.lang.StringBuffer
 
 /** Renders the given definition in a simple string */
-class StringRenderer extends Renderer[String] {
+class StringRenderer {
   def render(definition: FractalDefinition, depth: Int): String = {
     val res = new StringBuffer()
 

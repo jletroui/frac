@@ -24,8 +24,7 @@ case class Point(x: Double, y: Double)
 case class RendererStats(turtleMoves: Int, turtleTurns: Int, sequenceLength: Int, duration: Long)
 
 /** Renders the given definition on an AWT graphics */
-class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
-  private[this] val DIGIT = """([1-9])""".r
+class GraphicsRenderer(g: Graphics) {
   private[this] val MARGIN = 20
   private[this] var position = Point(0, 0)
   private[this] var heading = 0.0
@@ -34,7 +33,6 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
   private[this] var travelLength = 10.0
   private[this] var stateStack = Stack.empty[TurtleState]
   private[this] var (turtleMovesCounter, turtleTurnsCounter, sequenceCounter) = (0, 0, 0)
-  private[this] var repetitionCount = 1
   private[this] var strokeColor = Color.black
 
   private case class TurtleState(position: Point, heading: Double, moveLength: Double, strokeColor: Color)
@@ -84,39 +82,31 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
   /** Interpret the given character and update state accordingly */
   private def callback(draw: Boolean, scaleRatio: Double)(c: Symbol) {
     c match {
-      case RuleReference('+') =>
+      case RuleReference('+', repetitionCount) =>
         heading -= turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
-        repetitionCount = 1
-      case RuleReference('-') =>
+      case RuleReference('-', repetitionCount) =>
         heading += turnAngle * repetitionCount
         turtleTurnsCounter += repetitionCount
-        repetitionCount = 1
-      case RuleReference('F') =>
-        move(draw)
+      case RuleReference('F', repetitionCount) =>
+        move(draw, repetitionCount)
         turtleMovesCounter += repetitionCount
-        repetitionCount = 1
-      case RuleReference('f') =>
-        move(false)
+      case RuleReference('f', repetitionCount) =>
+        move(false, repetitionCount)
         turtleMovesCounter += repetitionCount
-        repetitionCount = 1
-      case RuleReference('[') =>
+      case RuleReference('[', _) =>
         stateStack = stateStack.push(TurtleState(position, heading, travelLength, strokeColor))
-      case RuleReference(']') =>
+      case RuleReference(']', _) =>
         val (state, newStack) = stateStack.pop2
         heading = state.heading
         travelLength = state.moveLength
         position = state.position
         strokeColor = state.strokeColor
         stateStack = newStack
-      case RuleReference('>') =>
+      case RuleReference('>', _) =>
         travelLength *= scaleRatio
-        repetitionCount = 1
-      case RuleReference('<') =>
+      case RuleReference('<', _) =>
         travelLength /= scaleRatio
-        repetitionCount = 1
-      case RuleReference(DIGIT(number)) =>
-        repetitionCount = number.toString.toInt
       case colorStatement : ColorOperation =>
         strokeColor = colorStatement.changeColor(strokeColor)
         g.setColor(strokeColor)
@@ -128,7 +118,7 @@ class GraphicsRenderer(g: Graphics) extends Renderer[RendererStats] {
   }
 
   /** Move the turtle, and optionally draws the movement */
-  private def move(draw: Boolean) {
+  private def move(draw: Boolean, repetitionCount: Int) {
     val newPoint = Point(
         position.x + travelLength * repetitionCount * cos(heading),
         position.y + travelLength * repetitionCount * sin(heading))

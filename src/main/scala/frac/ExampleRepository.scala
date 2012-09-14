@@ -21,9 +21,9 @@ import java.nio.file.{Paths, Files}
 import java.nio.charset.Charset
 
 /** Reads the definition.frac file and parses the definitions */
-object DefaultDefinitionRepository extends DefinitionRepository
+object ExampleRepository
 {
   private[this] val path = Paths.get(Thread.currentThread.getContextClassLoader.getResource("definitions.frac").toURI)
   private[this] val defintionText = new String(Files.readAllBytes(path), Charset.defaultCharset)
-  override val getDefinitions = new FractalDefinitionParser().parseFractalDefinitionList(defintionText).result.get
+  val examples = new FractalDefinitionParser().parseFractalDefinitionList(defintionText).result.get
 }

@@ -43,24 +43,23 @@ class FractalDefinitionParser extends Parser {
 
   def FractalDefinitionList = rule { zeroOrMore( FractalDefinition ) }
   def SingleFractalDefinition = rule { FractalDefinition ~ EOI }
-  def FractalDefinition = rule { FractalDefinitionRule ~~> (build) } // Indirection necessary to have a correct context.getMatchRange on last rule
-  def FractalDefinitionRule = rule { zeroOrMore(ConstantAssignment) ~ SeedAssignment ~ zeroOrMore(Rule) }
+  def FractalDefinition = rule { ( zeroOrMore(ConstantAssignment) ~ SeedAssignment ~ zeroOrMore(Rule) ) ~~> build }
   def ConstantAssignment = rule { TitleAssignment | AngleAssignment | RatioAssignment | StartAssignment }
-  def TitleAssignment: Rule1[DefinitionTansformer] = rule { "title" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ Title ~ Ignored ~~> (setTitle(_)) }
-  def AngleAssignment: Rule1[DefinitionTansformer] = rule { "angle" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ PositiveInteger ~ Ignored ~~> (setAngle(_)) }
-  def RatioAssignment: Rule1[DefinitionTansformer] = rule { "ratio" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ RealNumber ~ Ignored ~~> (setRatio(_)) }
-  def StartAssignment: Rule1[DefinitionTansformer] = rule { "start" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ ( LeftStartingPoint | BottomStartingPoint ) ~ Ignored ~~> (setStart(_)) }
+  def TitleAssignment: Rule1[DefinitionTansformer] = rule { "title" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ Title ~ Ignored ~~> setTitle }
+  def AngleAssignment: Rule1[DefinitionTansformer] = rule { "angle" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ PositiveInteger ~ Ignored ~~> setAngle }
+  def RatioAssignment: Rule1[DefinitionTansformer] = rule { "ratio" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ RealNumber ~ Ignored ~~> setRatio }
+  def StartAssignment: Rule1[DefinitionTansformer] = rule { "start" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ ( LeftStartingPoint | BottomStartingPoint ) ~ Ignored ~~> setStart }
   def SeedAssignment = rule { "seed" ~ WhiteSpace ~ "=" ~ WhiteSpace ~ Symbols ~ Ignored }
-  def Rule = rule { RuleName ~ WhiteSpace ~ "=" ~ WhiteSpace ~ Symbols ~ Ignored ~~> (frac.Rule(_, _)) }
-  def RuleName = rule { noneOf("{") ~:> (name => name) }
+  def Rule = rule { RuleName ~ WhiteSpace ~ "=" ~ WhiteSpace ~ Symbols ~ Ignored ~~> frac.Rule }
+  def RuleName = rule { noneOf("{ \t\r\n\f") ~:> (c => c) }
 
   def Symbols = rule { zeroOrMore(Symbol) }
   def Symbol = rule { ColorOperation | RuleReference }
-  def RuleReference: Rule1[Symbol] = rule { noneOf("{ \t\r\n\f") ~:> (frac.RuleReference(_)) }
+  def RuleReference: Rule1[Symbol] = rule { RepeatCount ~ RuleName ~~> frac.RuleReference.apply }
   def ColorOperation = rule { "{" ~ ( ConstantColorOperation | PredefinedColorOperation | IncrementColorOperation )  ~ "}" }
-  def ConstantColorOperation: Rule1[Symbol] = rule { PositiveInteger ~ "," ~ PositiveInteger ~ "," ~ PositiveInteger ~~> (frac.ConstantColorOperation(_, _, _)) }
-  def PredefinedColorOperation: Rule1[Symbol] = rule { Letters ~> (frac.ConstantColorOperation(_)) }
-  def IncrementColorOperation: Rule1[Symbol] = rule { Increment ~ "," ~ Increment ~ "," ~ Increment ~~> (frac.IncrementColorOperation(_, _, _)) }
+  def ConstantColorOperation: Rule1[Symbol] = rule { PositiveInteger ~ "," ~ PositiveInteger ~ "," ~ PositiveInteger ~~> frac.ConstantColorOperation.apply }
+  def PredefinedColorOperation: Rule1[Symbol] = rule { Letters ~> frac.ConstantColorOperation.apply }
+  def IncrementColorOperation: Rule1[Symbol] = rule { Increment ~ "," ~ Increment ~ "," ~ Increment ~~> frac.IncrementColorOperation }
 
   def LeftStartingPoint = rule { "left" ~ push(StartingPoint.Left) }
   def BottomStartingPoint = rule { "bottom" ~ push(StartingPoint.Bottom) }
@@ -69,6 +68,7 @@ class FractalDefinitionParser extends Parser {
   def PositiveInteger = rule { oneOrMore(Digit) ~> (_.toInt) }
   def Increment = rule { Sign ~ PositiveInteger ~~> ( (_: Int) * (_: Int) ) }
   def Sign = rule { ( "+" ~ push(1) ) | ( "-" ~ push(-1) ) }
+  def RepeatCount = rule { zeroOrMore(Digit) ~> ( s => if (s.isEmpty) 1 else s.toInt ) }
   def Digit = rule { "0" - "9" }
   def Letters = rule { oneOrMore(Letter) }
   def Letter = rule { "a" - "z" | "A" - "Z" }
@@ -77,6 +77,6 @@ class FractalDefinitionParser extends Parser {
   def BlankLine = rule { WhiteSpace ~ EOL }
   def Ignored = rule { zeroOrMore(BlankLine) }
 
-  def parseFractalDefinition(input: String) = ReportingParseRunner(SingleFractalDefinition).run(input)
+  def parseFractalDefinition(input: String) = TracingParseRunner(SingleFractalDefinition).run(input)
   def parseFractalDefinitionList(input: String) = ReportingParseRunner(FractalDefinitionList).run(input)
 }
