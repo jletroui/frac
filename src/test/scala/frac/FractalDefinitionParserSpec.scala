@@ -74,6 +74,14 @@ class FractalDefinitionParserSpec extends Specification {
           List(RuleReference('F')),
           src) )
     }
+    "parse repeated primitive rule" in {
+      val src = "seed = 24F"
+
+      sut.parseFractalDefinition(src).result.get must beEqualTo(
+        FractalDefinition(
+          List(RuleReference('F', 24)),
+          src) )
+    }
     "parse multiple primitives rule" in {
       val src = "seed = F+A"
 

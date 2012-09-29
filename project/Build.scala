@@ -10,7 +10,7 @@ object FracBuild extends Build {
     )
     .settings(assemblySettings :_*)
     .settings(
-      version := "1.0.3",
+      version := V.frac,
       organization := "ca.frac",
       scalaVersion := V.scala,
       scalacOptions := Seq("-encoding", "utf8"),
@@ -21,10 +21,12 @@ object FracBuild extends Build {
         "org.parboiled" % "parboiled-scala" % V.parboiled % "compile",
         "org.specs2" %% "specs2" % V.specs2 % "test"
       ),
-      mainClass in assembly := Some("frac.Main")
+      mainClass in assembly := Some("frac.Main"),
+      jarName in assembly := "frac-%s.jar".format(V.frac)
     )
 
   object V {
+    val frac = "1.0.3"
     val scala = "2.9.1"
     val specs2 = "1.12.1"
     val parboiled = "1.0.2"

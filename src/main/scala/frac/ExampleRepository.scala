@@ -15,15 +15,15 @@
  */
 package frac
 
-import java.io.{InputStreamReader, Reader, BufferedInputStream, BufferedReader}
+import java.io._
 import java.lang.StringBuffer
 import java.nio.file.{Paths, Files}
 import java.nio.charset.Charset
 
-/** Reads the definition.frac file and parses the definitions */
+/** Reads the examples in definition.frac file */
 object ExampleRepository
 {
-  private[this] val path = Paths.get(Thread.currentThread.getContextClassLoader.getResource("definitions.frac").toURI)
-  private[this] val defintionText = new String(Files.readAllBytes(path), Charset.defaultCharset)
+  private[this] val stream = Thread.currentThread.getContextClassLoader.getResourceAsStream("definitions.frac")
+  private[this] val defintionText = new String(stream.toByteArray, Charset.defaultCharset)
   val examples = new FractalDefinitionParser().parseFractalDefinitionList(defintionText).result.get
 }

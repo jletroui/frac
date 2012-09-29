@@ -21,7 +21,7 @@ Download and installation
 You can download frac in the "Downloads" section. You need a Java runtime 6 or greater in order to run frac. On most systems, just double click on the jar you downloaded.
 You can also type this command in a terminal:
 
-    java -jar frac-1.0.2.jar
+    java -jar frac-1.0.3.jar
 
 Most basic definition
 =====================
@@ -60,9 +60,9 @@ The above definition is using 2 primitives: *F* and *+*. *F* instruct the turtle
 - **]**: unstack and restore the corresponding turtle's position, heading, and moving length. The following example is drawing 3 branches:
 
         seed = [F][+F][-F]
-- **1-9**: the number of times the next graphical primitive will be applied. It only applies to the very next primitive. The following example is drawing a segment 3 times longer than usual:
+- **a positive integer**: the number of times the next graphical primitive will be applied. It only applies to the very next primitive, and only to 'F', 'f', '+' or '-'. Repetition count will be ignored for other primitive / rules. The following example is drawing a segment 11 times longer than usual:
 
-        seed = 3F
+        seed = 11F
 - **{r,g,b} or {nameOfColor} or {changeInRed,changeInGreen,changeInBlue}**: sets the new stroke color by specifying either:
     - red, green, and blue decimal values: specifies a color by its RGB components.
     - color name: specifies a color by its name. Available colors are black, blue, cyan, darkGray, gray, green, lightGray, magenta, orange, pink, red, white, yellow.

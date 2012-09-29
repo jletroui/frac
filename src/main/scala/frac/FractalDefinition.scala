@@ -60,7 +60,8 @@ case class Rule(name: Char, expression: List[Symbol])
 trait Symbol
 
 object RuleReference {
-  def apply(repetition: Int, ruleName: Char): RuleReference = RuleReference(ruleName, repetition)
+  def apply(repetition: Option[Int], ruleName: Char): RuleReference = RuleReference(ruleName, repetition.getOrElse(1))
+//  def apply(ruleName: Char): RuleReference = RuleReference(ruleName, 1)
 }
 
 /** A primitive token. Primitives are token that have a rule to be executed */

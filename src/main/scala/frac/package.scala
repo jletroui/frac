@@ -1,4 +1,4 @@
-import java.io.Closeable
+import java.io.{ByteArrayOutputStream, InputStream, Closeable}
 
 /*
 * Copyright (C) 2012 Julien Letrouit
@@ -18,6 +18,7 @@ import java.io.Closeable
 
 package object frac {
   implicit def toRichInt(enriched: Int) = new RichInt(enriched)
+  implicit def toRichInputStream(enriched: InputStream) = new RichInputStream(enriched)
 
   def using[A <: Closeable](closeable: A)(block: A => Unit) {
     try {
@@ -31,4 +32,20 @@ package object frac {
 
 class RichInt(enriched: Int) {
   def toRad = math.Pi * 2 * enriched / 360
+}
+
+class RichInputStream(enriched: InputStream) {
+  def toByteArray = {
+    val output = new ByteArrayOutputStream
+    val readBuffer = new Array[Byte](16384)
+    var read = enriched.read(readBuffer, 0, readBuffer.length)
+
+    while (read != -1) {
+      output.write(readBuffer, 0, read)
+      read = enriched.read(readBuffer, 0, readBuffer.length)
+    }
+
+    output.flush()
+    output.toByteArray
+  }
 }
