@@ -26,7 +26,7 @@ object FracBuild extends Build {
     )
 
   object V {
-    val frac = "1.0.3"
+    val frac = "1.0.4"
     val scala = "2.9.1"
     val specs2 = "1.12.1"
     val parboiled = "1.0.2"

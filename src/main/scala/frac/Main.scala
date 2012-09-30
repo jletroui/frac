@@ -167,8 +167,24 @@ object Main extends SimpleSwingApplication {
 
   def refresh() {
     try {
-      definition = parser.parseFractalDefinition(editor.text).result.get
-      fractalPanel.repaint()
+      val parsingResult = parser.parseFractalDefinition(editor.text)
+
+      if (parsingResult.matched) {
+        definition = parsingResult.result.get
+        fractalPanel.repaint()
+      }
+      else {
+        val error = parsingResult.parseErrors.head
+        val message = new StringBuilder("There is a syntax error at the character %d.".format(error.getStartIndex))
+        if (error.getErrorMessage != null) message.append(" Additional info: %s".format(error.getErrorMessage))
+        Dialog.showMessage(
+          message = message,
+          title = "Syntax error",
+          messageType = Dialog.Message.Error)
+
+        editor.caret.position = error.getStartIndex
+        editor.requestFocusInWindow()
+      }
     }
     catch {
       case t: Throwable =>
