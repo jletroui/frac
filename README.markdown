@@ -23,7 +23,7 @@ You can download frac in the "Release" section of the Github repository.
 You need a Java runtime 8 or greater in order to run frac. On most systems, just double click on the jar you downloaded.
 You can also type this command in a terminal:
 
-    java -jar frac-1.0.5.jar
+    java -jar frac-1.0.6.jar
 
 Most basic definition
 =====================
